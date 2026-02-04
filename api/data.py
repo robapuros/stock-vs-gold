@@ -2,7 +2,8 @@
 
 from http.server import BaseHTTPRequestHandler
 import json
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, urlparse, quote
+from urllib.request import Request, urlopen
 from datetime import datetime, timedelta
 
 import yfinance as yf
@@ -27,7 +28,6 @@ def calculate_ema(data, period):
     if len(data) < period:
         return [None] * len(data)
     ema = [None] * (period - 1)
-    # First EMA is SMA
     sma = sum(data[:period]) / period
     ema.append(round(sma, 6))
     multiplier = 2 / (period + 1)
@@ -45,13 +45,11 @@ def calculate_rsi(data, period=14):
     gains = []
     losses = []
     
-    # Calculate price changes
     for i in range(1, len(data)):
         change = data[i] - data[i-1]
         gains.append(max(0, change))
         losses.append(max(0, -change))
     
-    # First RSI
     avg_gain = sum(gains[:period]) / period
     avg_loss = sum(losses[:period]) / period
     
@@ -61,7 +59,6 @@ def calculate_rsi(data, period=14):
         rs = avg_gain / avg_loss
         rsi.append(round(100 - (100 / (1 + rs)), 2))
     
-    # Subsequent RSI values
     for i in range(period, len(gains)):
         avg_gain = (avg_gain * (period - 1) + gains[i]) / period
         avg_loss = (avg_loss * (period - 1) + losses[i]) / period
@@ -89,7 +86,6 @@ def calculate_macd(data, fast=12, slow=26, signal=9):
         else:
             macd_line.append(round(ema_fast[i] - ema_slow[i], 6))
     
-    # Signal line (EMA of MACD)
     macd_values = [x for x in macd_line if x is not None]
     if len(macd_values) < signal:
         return macd_line, [None] * len(data), [None] * len(data)
@@ -98,10 +94,9 @@ def calculate_macd(data, fast=12, slow=26, signal=9):
     ema_signal = calculate_ema(macd_values, signal)
     signal_line.extend(ema_signal)
     
-    # Histogram
     histogram = []
     for i in range(len(data)):
-        if macd_line[i] is None or signal_line[i] is None:
+        if macd_line[i] is None or i >= len(signal_line) or signal_line[i] is None:
             histogram.append(None)
         else:
             histogram.append(round(macd_line[i] - signal_line[i], 6))
@@ -129,11 +124,44 @@ def calculate_bollinger(data, period=20, std_dev=2):
     
     return sma, upper, lower
 
+def search_tickers(query):
+    """Search for tickers using Yahoo Finance."""
+    try:
+        url = f"https://query2.finance.yahoo.com/v1/finance/search?q={quote(query)}&quotesCount=10&newsCount=0"
+        req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode())
+            quotes = data.get('quotes', [])
+            results = []
+            for q in quotes:
+                if q.get('quoteType') in ['EQUITY', 'ETF', 'MUTUALFUND', 'INDEX']:
+                    results.append({
+                        'symbol': q.get('symbol', ''),
+                        'name': q.get('shortname') or q.get('longname', ''),
+                        'exchange': q.get('exchange', ''),
+                        'type': q.get('quoteType', '')
+                    })
+            return results
+    except Exception as e:
+        return []
+
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed = urlparse(self.path)
+        path = parsed.path
         params = parse_qs(parsed.query)
         
+        # Search endpoint
+        if path == '/api/search':
+            query = params.get('q', [''])[0]
+            if len(query) < 1:
+                self.send_json({'results': []})
+                return
+            results = search_tickers(query)
+            self.send_json({'results': results})
+            return
+        
+        # Main data endpoint
         ticker = params.get('ticker', ['AAPL'])[0].upper()
         years = int(params.get('years', ['10'])[0])
         
@@ -145,7 +173,9 @@ class handler(BaseHTTPRequestHandler):
             stock_hist = stock.history(start=start_date, end=end_date)
             
             if stock_hist.empty:
-                self.send_error_response(404, f'No data found for {ticker}')
+                # Try to find similar tickers
+                suggestions = search_tickers(ticker.replace('.', ' '))
+                self.send_error_response(404, f'No data found for {ticker}', suggestions)
                 return
             
             gold = yf.Ticker(GOLD_TICKER)
@@ -162,11 +192,10 @@ class handler(BaseHTTPRequestHandler):
             merged = stock_df.join(gold_df, how='inner')
             merged['stock_in_gold'] = merged['stock_price'] / merged['gold_price']
             
-            # Get data as lists for TA calculations
             gold_prices = merged['stock_in_gold'].tolist()
             usd_prices = merged['stock_price'].tolist()
             
-            # Calculate Technical Indicators (on gold-denominated prices)
+            # Technical Indicators
             sma_20 = calculate_sma(gold_prices, 20)
             sma_50 = calculate_sma(gold_prices, 50)
             sma_200 = calculate_sma(gold_prices, 200)
@@ -202,7 +231,7 @@ class handler(BaseHTTPRequestHandler):
             
             data = {
                 'ticker': ticker,
-                'company_name': info.get('shortName', ticker),
+                'company_name': info.get('shortName') or info.get('longName') or ticker,
                 'dates': [d.strftime('%Y-%m-%d') for d in merged.index],
                 'stock_usd': [round(x, 2) for x in usd_prices],
                 'gold_usd': [round(x, 2) for x in merged['gold_price'].tolist()],
@@ -253,18 +282,25 @@ class handler(BaseHTTPRequestHandler):
                 }
             }
             
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            self.wfile.write(json.dumps(data).encode())
+            self.send_json(data)
             
         except Exception as e:
-            self.send_error_response(500, str(e))
+            suggestions = search_tickers(ticker.replace('.', ' ').split('.')[0])
+            self.send_error_response(500, str(e), suggestions)
     
-    def send_error_response(self, code, message):
+    def send_json(self, data):
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        self.wfile.write(json.dumps(data).encode())
+    
+    def send_error_response(self, code, message, suggestions=None):
         self.send_response(code)
         self.send_header('Content-Type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()
-        self.wfile.write(json.dumps({'error': message}).encode())
+        response = {'error': message}
+        if suggestions:
+            response['suggestions'] = suggestions[:5]
+        self.wfile.write(json.dumps(response).encode())
