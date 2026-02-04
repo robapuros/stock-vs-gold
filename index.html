@@ -3,9 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stock vs Gold</title>
+    
+    <!-- SEO Meta Tags -->
+    <title>Stock vs Gold - Compare Stock Prices in Gold | Real Value Calculator</title>
+    <meta name="description" content="See stock prices measured in gold instead of fiat currency. Compare any stock's real purchasing power over time. Track market cap, P/E ratio, and key metrics in gold terms.">
+    <meta name="keywords" content="stock price gold, stock vs gold, gold price comparison, real stock value, inflation adjusted stock price, stock market cap gold, stock gold calculator, gold standard stocks">
+    <meta name="author" content="Stock vs Gold">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://stockvsgold.com/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stockvsgold.com/">
+    <meta property="og:title" content="Stock vs Gold - See Stock Prices in Real (Gold) Terms">
+    <meta property="og:description" content="Compare any stock's price measured in gold instead of fiat. See the real value beyond inflation. Free tool with charts, market cap, and key metrics.">
+    <meta property="og:image" content="https://stockvsgold.com/og-image.png">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://stockvsgold.com/">
+    <meta name="twitter:title" content="Stock vs Gold - See Stock Prices in Real (Gold) Terms">
+    <meta name="twitter:description" content="Compare any stock's price measured in gold instead of fiat. See the real value beyond inflation.">
+    <meta name="twitter:image" content="https://stockvsgold.com/og-image.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Stock vs Gold",
+        "description": "Compare stock prices measured in gold instead of fiat currency. Track real purchasing power over time.",
+        "url": "https://stockvsgold.com",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            /* Dark theme (default) */
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --bg-card-hover: rgba(255, 255, 255, 0.08);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-primary: #eee;
+            --text-secondary: #888;
+            --text-muted: #666;
+            --gold: #ffd700;
+            --gold-secondary: #ffb347;
+            --positive: #4ade80;
+            --negative: #f87171;
+            --input-bg: #2a2a4a;
+            --input-border: #3a3a5a;
+        }
+        
+        [data-theme="light"] {
+            --bg-primary: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(0, 0, 0, 0.03);
+            --bg-card-hover: rgba(0, 0, 0, 0.06);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --text-primary: #1a1a2e;
+            --text-secondary: #555;
+            --text-muted: #888;
+            --gold: #c9a000;
+            --gold-secondary: #e6a800;
+            --positive: #16a34a;
+            --negative: #dc2626;
+            --input-bg: #ffffff;
+            --input-border: #ddd;
+        }
+        
         * {
             box-sizing: border-box;
             margin: 0;
@@ -14,10 +92,11 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #eee;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
             min-height: 100vh;
             padding: 20px;
+            transition: background 0.3s, color 0.3s;
         }
         
         .container {
@@ -28,19 +107,37 @@
         header {
             text-align: center;
             margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--bg-card-hover);
         }
         
         h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            background: linear-gradient(90deg, #ffd700, #ffb347);
+            background: linear-gradient(90deg, var(--gold), var(--gold-secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         
         .subtitle {
-            color: #888;
+            color: var(--text-secondary);
             font-size: 1.1rem;
         }
         
@@ -60,18 +157,18 @@
         }
         
         input, select {
-            background: #2a2a4a;
-            color: #fff;
-            border: 1px solid #3a3a5a;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--input-border);
         }
         
         input:focus, select:focus {
             outline: none;
-            border-color: #ffd700;
+            border-color: var(--gold);
         }
         
         button {
-            background: linear-gradient(90deg, #ffd700, #ffb347);
+            background: linear-gradient(90deg, var(--gold), var(--gold-secondary));
             color: #1a1a2e;
             font-weight: bold;
             cursor: pointer;
@@ -97,14 +194,19 @@
         }
         
         .stat-card {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--bg-card);
             border-radius: 12px;
             padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            transition: background 0.3s;
+        }
+        
+        .stat-card:hover {
+            background: var(--bg-card-hover);
         }
         
         .stat-card h3 {
-            color: #888;
+            color: var(--text-secondary);
             font-size: 0.9rem;
             margin-bottom: 10px;
             text-transform: uppercase;
@@ -123,70 +225,26 @@
         
         .stat-card .sub {
             font-size: 0.9rem;
-            color: #888;
+            color: var(--text-secondary);
             margin-top: 5px;
         }
         
-        .positive { color: #4ade80; }
-        .negative { color: #f87171; }
-        .gold { color: #ffd700; }
-        
-        .metrics-section {
-            margin-bottom: 30px;
-        }
-        
-        .metrics-section h2 {
-            color: #ffd700;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
-            padding-bottom: 10px;
-        }
-        
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-        
-        .metric-card {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            padding: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .metric-card .label {
-            color: #888;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-        }
-        
-        .metric-card .value {
-            font-size: 1.3rem;
-            font-weight: bold;
-        }
-        
-        .metric-card .gold-value {
-            color: #ffd700;
-            font-size: 0.95rem;
-            margin-top: 3px;
-        }
+        .positive { color: var(--positive); }
+        .negative { color: var(--negative); }
+        .gold { color: var(--gold); }
         
         .chart-container {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--bg-card);
             border-radius: 12px;
             padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
         }
         
         .chart-title {
             text-align: center;
             margin-bottom: 15px;
-            color: #ccc;
+            color: var(--text-secondary);
         }
         
         .toggle-container {
@@ -201,6 +259,7 @@
             align-items: center;
             gap: 8px;
             cursor: pointer;
+            color: var(--text-primary);
         }
         
         .toggle-container input[type="checkbox"] {
@@ -209,31 +268,53 @@
             cursor: pointer;
         }
         
-        .loading {
-            text-align: center;
-            padding: 50px;
-            color: #888;
+        .metrics-section {
+            margin-bottom: 30px;
         }
         
-        .error {
-            background: rgba(248, 113, 113, 0.2);
-            border: 1px solid #f87171;
+        .metrics-section h2 {
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .metric-card {
+            background: var(--bg-card);
             border-radius: 8px;
             padding: 15px;
-            text-align: center;
-            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            transition: background 0.3s;
         }
         
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #666;
-            font-size: 0.9rem;
+        .metric-card:hover {
+            background: var(--bg-card-hover);
         }
         
-        footer a {
-            color: #ffd700;
-            text-decoration: none;
+        .metric-card .label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        
+        .metric-card .value {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        
+        .metric-card .gold-value {
+            color: var(--gold);
+            font-size: 0.95rem;
+            margin-top: 3px;
         }
         
         .highlight-box {
@@ -244,8 +325,13 @@
             margin-bottom: 30px;
         }
         
+        [data-theme="light"] .highlight-box {
+            background: linear-gradient(135deg, rgba(201, 160, 0, 0.1), rgba(230, 168, 0, 0.1));
+            border: 1px solid rgba(201, 160, 0, 0.4);
+        }
+        
         .highlight-box h3 {
-            color: #ffd700;
+            color: var(--gold);
             margin-bottom: 15px;
         }
         
@@ -254,11 +340,75 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--border-color);
         }
         
         .highlight-row:last-child {
             border-bottom: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: var(--text-secondary);
+        }
+        
+        .error {
+            background: rgba(248, 113, 113, 0.2);
+            border: 1px solid var(--negative);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* SEO Content Section */
+        .seo-content {
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .seo-content h2 {
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .seo-content h3 {
+            color: var(--text-primary);
+            margin: 25px 0 15px;
+            font-size: 1.3rem;
+        }
+        
+        .seo-content p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 15px;
+            max-width: 800px;
+        }
+        
+        .seo-content ul {
+            color: var(--text-secondary);
+            margin-left: 20px;
+            margin-bottom: 15px;
+            line-height: 1.8;
         }
         
         @media (max-width: 600px) {
@@ -267,19 +417,26 @@
             .controls input, .controls select, .controls button {
                 width: 100%;
             }
+            .theme-toggle {
+                position: static;
+                margin-bottom: 15px;
+            }
         }
     </style>
 </head>
-<body>
+<body data-theme="dark">
     <div class="container">
         <header>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                <span id="themeIcon">☀️</span>
+            </button>
             <h1>📊 Stock vs Gold</h1>
-            <p class="subtitle">See stock prices measured in gold, not fiat</p>
+            <p class="subtitle">See stock prices measured in gold, not fiat currency</p>
         </header>
         
         <div class="controls">
-            <input type="text" id="ticker" placeholder="Enter ticker (e.g., AAPL)" value="AAPL">
-            <select id="years">
+            <input type="text" id="ticker" placeholder="Enter ticker (e.g., AAPL, TSLA, MSFT)" value="AAPL" aria-label="Stock ticker symbol">
+            <select id="years" aria-label="Time period">
                 <option value="1">1 Year</option>
                 <option value="5">5 Years</option>
                 <option value="10" selected>10 Years</option>
@@ -288,9 +445,10 @@
             <button id="fetchBtn" onclick="fetchData()">Analyze</button>
         </div>
         
-        <div id="error" class="error" style="display: none;"></div>
+        <div id="error" class="error" style="display: none;" role="alert"></div>
         
         <div id="results" style="display: none;">
+            <!-- Price Summary Cards -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <h3>💵 Price in USD</h3>
@@ -303,15 +461,32 @@
                     <div class="change" id="goldChange">-</div>
                 </div>
                 <div class="stat-card">
-                    <h3>📈 The Difference</h3>
+                    <h3>📈 Real vs Nominal</h3>
                     <div class="value" id="difference">-</div>
                     <div class="change" id="diffExplain">-</div>
                 </div>
             </div>
             
+            <!-- Chart Section (moved up) -->
+            <div class="toggle-container">
+                <label>
+                    <input type="checkbox" id="showGold" checked onchange="updateChart()">
+                    Show Gold Price (oz)
+                </label>
+                <label>
+                    <input type="checkbox" id="showUsd" onchange="updateChart()">
+                    Show USD Price
+                </label>
+            </div>
+            
+            <div class="chart-container">
+                <h3 class="chart-title" id="chartTitle">-</h3>
+                <canvas id="priceChart" aria-label="Stock price chart comparing USD and Gold values"></canvas>
+            </div>
+            
             <!-- Market Cap in Gold Highlight -->
             <div class="highlight-box" id="marketCapBox">
-                <h3>🏦 Market Cap</h3>
+                <h3>🏦 Market Capitalization</h3>
                 <div class="highlight-row">
                     <span>In USD</span>
                     <span class="value" id="marketCapUsd">-</span>
@@ -321,7 +496,7 @@
                     <span class="value gold" id="marketCapGold">-</span>
                 </div>
                 <div class="highlight-row">
-                    <span style="color: #888;">Current Gold Price</span>
+                    <span style="color: var(--text-secondary);">Current Gold Price</span>
                     <span id="currentGoldPrice">-</span>
                 </div>
             </div>
@@ -389,37 +564,80 @@
                     </div>
                 </div>
             </div>
-            
-            <div class="toggle-container">
-                <label>
-                    <input type="checkbox" id="showGold" checked onchange="updateChart()">
-                    Show Gold Price (oz)
-                </label>
-                <label>
-                    <input type="checkbox" id="showUsd" onchange="updateChart()">
-                    Show USD Price
-                </label>
-            </div>
-            
-            <div class="chart-container">
-                <h3 class="chart-title" id="chartTitle">-</h3>
-                <canvas id="priceChart"></canvas>
-            </div>
         </div>
         
         <div id="loading" class="loading" style="display: none;">
             Loading data...
         </div>
         
+        <!-- SEO Content Section -->
+        <section class="seo-content">
+            <h2>Why Measure Stock Prices in Gold?</h2>
+            <p>
+                When you look at stock prices in dollars, you're seeing a distorted picture. The US dollar has lost over 95% of its purchasing power since 1913, and continues to lose value due to inflation and monetary expansion. Gold, however, has maintained its purchasing power for thousands of years.
+            </p>
+            
+            <h3>The Problem with Fiat Currency Measurements</h3>
+            <p>
+                A stock that went from $10 to $100 over 20 years might seem like a 10x return. But if the dollar lost 60% of its purchasing power during that time, your "gains" are largely an illusion. You need 2.5x more dollars just to maintain the same purchasing power.
+            </p>
+            
+            <h3>Gold as a Stable Measuring Stick</h3>
+            <p>
+                Gold has been money for over 5,000 years. Unlike fiat currencies, it cannot be printed or debased by governments. When you measure stock prices in gold ounces, you see the real value creation (or destruction) of a company over time.
+            </p>
+            
+            <h3>What This Tool Shows You</h3>
+            <ul>
+                <li><strong>Price in Gold (oz):</strong> How many ounces of gold one share costs</li>
+                <li><strong>Real vs Nominal Returns:</strong> The difference between USD gains and gold-adjusted gains</li>
+                <li><strong>Market Cap in Gold:</strong> The company's total value measured in gold ounces</li>
+                <li><strong>Key Metrics:</strong> P/E ratio, PEG, dividend yield, and more</li>
+            </ul>
+            
+            <h3>How to Use Stock vs Gold</h3>
+            <p>
+                Enter any stock ticker symbol (like AAPL for Apple, TSLA for Tesla, or MSFT for Microsoft), select your time period, and click Analyze. The tool will fetch historical data and calculate the stock's price in gold terms, showing you the real performance beyond inflation.
+            </p>
+        </section>
+        
         <footer>
             <p>Data from Yahoo Finance • Gold = Gold Futures (GC=F)</p>
-            <p>Built with ⚡ by <a href="#">clawdbot</a></p>
+            <p>Built with ⚡ by <a href="https://github.com/robapuros/stock-vs-gold">clawdbot</a> | <a href="https://github.com/robapuros/stock-vs-gold">View on GitHub</a></p>
         </footer>
     </div>
     
     <script>
         let chartInstance = null;
         let currentData = null;
+        
+        // Theme handling
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+            if (body.dataset.theme === 'dark') {
+                body.dataset.theme = 'light';
+                icon.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.dataset.theme = 'dark';
+                icon.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+            // Update chart colors if exists
+            if (chartInstance) {
+                updateChart();
+            }
+        }
+        
+        // Load saved theme
+        function loadTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'light') {
+                document.body.dataset.theme = 'light';
+                document.getElementById('themeIcon').textContent = '🌙';
+            }
+        }
         
         function formatNumber(num) {
             if (num === null || num === undefined) return '-';
@@ -447,6 +665,12 @@
                 return;
             }
             
+            // Update URL for shareability
+            const url = new URL(window.location);
+            url.searchParams.set('ticker', ticker);
+            url.searchParams.set('years', years);
+            window.history.replaceState({}, '', url);
+            
             document.getElementById('fetchBtn').disabled = true;
             document.getElementById('loading').style.display = 'block';
             document.getElementById('results').style.display = 'none';
@@ -463,6 +687,9 @@
                 
                 currentData = data;
                 displayResults(data);
+                
+                // Update page title for SEO
+                document.title = `${data.ticker} Stock Price in Gold | Stock vs Gold`;
                 
             } catch (err) {
                 showError('Failed to fetch data. Please try again.');
@@ -544,6 +771,12 @@
             
             const showGold = document.getElementById('showGold').checked;
             const showUsd = document.getElementById('showUsd').checked;
+            const isDark = document.body.dataset.theme === 'dark';
+            
+            const textColor = isDark ? '#888' : '#555';
+            const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+            const goldColor = isDark ? '#ffd700' : '#c9a000';
+            const greenColor = isDark ? '#4ade80' : '#16a34a';
             
             const datasets = [];
             
@@ -551,8 +784,8 @@
                 datasets.push({
                     label: 'Price in Gold (oz)',
                     data: currentData.stock_in_gold,
-                    borderColor: '#ffd700',
-                    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                    borderColor: goldColor,
+                    backgroundColor: isDark ? 'rgba(255, 215, 0, 0.1)' : 'rgba(201, 160, 0, 0.1)',
                     fill: true,
                     tension: 0.1,
                     yAxisID: 'y'
@@ -563,8 +796,8 @@
                 datasets.push({
                     label: 'Price in USD',
                     data: currentData.stock_usd,
-                    borderColor: '#4ade80',
-                    backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                    borderColor: greenColor,
+                    backgroundColor: isDark ? 'rgba(74, 222, 128, 0.1)' : 'rgba(22, 163, 74, 0.1)',
                     fill: true,
                     tension: 0.1,
                     yAxisID: 'y1'
@@ -579,16 +812,16 @@
             
             const scales = {
                 x: {
-                    ticks: { color: '#888', maxTicksLimit: 10 },
-                    grid: { color: 'rgba(255,255,255,0.1)' }
+                    ticks: { color: textColor, maxTicksLimit: 10 },
+                    grid: { color: gridColor }
                 },
                 y: {
                     type: 'linear',
                     display: showGold,
                     position: 'left',
-                    title: { display: true, text: 'Gold (oz)', color: '#ffd700' },
-                    ticks: { color: '#ffd700' },
-                    grid: { color: 'rgba(255,215,0,0.1)' }
+                    title: { display: true, text: 'Gold (oz)', color: goldColor },
+                    ticks: { color: goldColor },
+                    grid: { color: isDark ? 'rgba(255,215,0,0.1)' : 'rgba(201,160,0,0.1)' }
                 }
             };
             
@@ -597,8 +830,8 @@
                     type: 'linear',
                     display: true,
                     position: 'right',
-                    title: { display: true, text: 'USD ($)', color: '#4ade80' },
-                    ticks: { color: '#4ade80' },
+                    title: { display: true, text: 'USD ($)', color: greenColor },
+                    ticks: { color: greenColor },
                     grid: { drawOnChartArea: false }
                 };
             }
@@ -617,7 +850,7 @@
                     },
                     plugins: {
                         legend: {
-                            labels: { color: '#ccc' }
+                            labels: { color: textColor }
                         },
                         tooltip: {
                             callbacks: {
@@ -640,8 +873,21 @@
             if (e.key === 'Enter') fetchData();
         });
         
-        // Load default on page load
-        window.onload = fetchData;
+        // Load from URL params
+        function loadFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const ticker = params.get('ticker');
+            const years = params.get('years');
+            if (ticker) document.getElementById('ticker').value = ticker;
+            if (years) document.getElementById('years').value = years;
+        }
+        
+        // Initialize
+        window.onload = function() {
+            loadTheme();
+            loadFromUrl();
+            fetchData();
+        };
     </script>
 </body>
 </html>
