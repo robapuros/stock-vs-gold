@@ -7,24 +7,24 @@
     <!-- SEO Meta Tags -->
     <title>Stock vs Gold - Compare Stock Prices in Gold | Real Value Calculator</title>
     <meta name="description" content="See stock prices measured in gold instead of fiat currency. Compare any stock's real purchasing power over time. Track market cap, P/E ratio, and key metrics in gold terms.">
-    <meta name="keywords" content="stock price gold, stock vs gold, gold price comparison, real stock value, inflation adjusted stock price, stock market cap gold, stock gold calculator, gold standard stocks">
+    <meta name="keywords" content="stock price gold, stock vs gold, gold price comparison, real stock value, inflation adjusted stock price, stock market cap gold, stock gold calculator, gold standard stocks, technical analysis">
     <meta name="author" content="Stock vs Gold">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://stockvsgold.com/">
+    <link rel="canonical" href="https://stocksvsgold.com/">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://stockvsgold.com/">
+    <meta property="og:url" content="https://stocksvsgold.com/">
     <meta property="og:title" content="Stock vs Gold - See Stock Prices in Real (Gold) Terms">
     <meta property="og:description" content="Compare any stock's price measured in gold instead of fiat. See the real value beyond inflation. Free tool with charts, market cap, and key metrics.">
-    <meta property="og:image" content="https://stockvsgold.com/og-image.png">
+    <meta property="og:image" content="https://stocksvsgold.com/og-image.png">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://stockvsgold.com/">
+    <meta name="twitter:url" content="https://stocksvsgold.com/">
     <meta name="twitter:title" content="Stock vs Gold - See Stock Prices in Real (Gold) Terms">
     <meta name="twitter:description" content="Compare any stock's price measured in gold instead of fiat. See the real value beyond inflation.">
-    <meta name="twitter:image" content="https://stockvsgold.com/og-image.png">
+    <meta name="twitter:image" content="https://stocksvsgold.com/og-image.png">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
@@ -35,8 +35,8 @@
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "Stock vs Gold",
-        "description": "Compare stock prices measured in gold instead of fiat currency. Track real purchasing power over time.",
-        "url": "https://stockvsgold.com",
+        "description": "Compare stock prices measured in gold instead of fiat currency. Track real purchasing power over time with technical analysis.",
+        "url": "https://stocksvsgold.com",
         "applicationCategory": "FinanceApplication",
         "operatingSystem": "Any",
         "offers": {
@@ -50,7 +50,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            /* Dark theme (default) */
             --bg-primary: #1a1a2e;
             --bg-secondary: #16213e;
             --bg-card: rgba(255, 255, 255, 0.05);
@@ -84,14 +83,10 @@
             --input-border: #ddd;
         }
         
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
             color: var(--text-primary);
             min-height: 100vh;
@@ -99,16 +94,9 @@
             transition: background 0.3s, color 0.3s;
         }
         
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1400px; margin: 0 auto; }
         
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
-        }
+        header { text-align: center; margin-bottom: 30px; position: relative; }
         
         .theme-toggle {
             position: absolute;
@@ -123,9 +111,7 @@
             transition: all 0.3s;
         }
         
-        .theme-toggle:hover {
-            background: var(--bg-card-hover);
-        }
+        .theme-toggle:hover { background: var(--bg-card-hover); }
         
         h1 {
             font-size: 2.5rem;
@@ -136,10 +122,7 @@
             background-clip: text;
         }
         
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
+        .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
         
         .controls {
             display: flex;
@@ -162,10 +145,7 @@
             border: 1px solid var(--input-border);
         }
         
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--gold);
-        }
+        input:focus, select:focus { outline: none; border-color: var(--gold); }
         
         button {
             background: linear-gradient(90deg, var(--gold), var(--gold-secondary));
@@ -180,11 +160,7 @@
             box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
         }
         
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         
         .stats-grid {
             display: grid;
@@ -201,9 +177,7 @@
             transition: background 0.3s;
         }
         
-        .stat-card:hover {
-            background: var(--bg-card-hover);
-        }
+        .stat-card:hover { background: var(--bg-card-hover); }
         
         .stat-card h3 {
             color: var(--text-secondary);
@@ -213,21 +187,8 @@
             letter-spacing: 1px;
         }
         
-        .stat-card .value {
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
-        
-        .stat-card .change {
-            font-size: 1.1rem;
-            margin-top: 5px;
-        }
-        
-        .stat-card .sub {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-top: 5px;
-        }
+        .stat-card .value { font-size: 1.8rem; font-weight: bold; }
+        .stat-card .change { font-size: 1.1rem; margin-top: 5px; }
         
         .positive { color: var(--positive); }
         .negative { color: var(--negative); }
@@ -241,36 +202,91 @@
             margin-bottom: 30px;
         }
         
-        .chart-title {
-            text-align: center;
-            margin-bottom: 15px;
-            color: var(--text-secondary);
-        }
+        .chart-title { text-align: center; margin-bottom: 15px; color: var(--text-secondary); }
         
-        .toggle-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
+        .toggle-section {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
             margin-bottom: 20px;
         }
         
-        .toggle-container label {
+        .toggle-section h4 {
+            color: var(--gold);
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        
+        .toggle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .toggle-grid label {
             display: flex;
             align-items: center;
             gap: 8px;
             cursor: pointer;
             color: var(--text-primary);
+            font-size: 0.9rem;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
         }
         
-        .toggle-container input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+        .toggle-grid label:hover { background: var(--bg-card-hover); }
+        
+        .toggle-grid input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
             cursor: pointer;
         }
         
-        .metrics-section {
-            margin-bottom: 30px;
+        .rsi-container {
+            height: 150px;
+            margin-top: 20px;
         }
+        
+        .rsi-indicator {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .rsi-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .rsi-label { color: var(--text-secondary); font-size: 0.9rem; }
+        
+        .rsi-bar {
+            flex: 1;
+            min-width: 200px;
+            height: 20px;
+            background: linear-gradient(90deg, var(--negative) 0%, var(--positive) 100%);
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .rsi-marker {
+            position: absolute;
+            top: -5px;
+            width: 4px;
+            height: 30px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            transform: translateX(-50%);
+        }
+        
+        .metrics-section { margin-bottom: 30px; }
         
         .metrics-section h2 {
             color: var(--gold);
@@ -291,31 +307,17 @@
             border-radius: 8px;
             padding: 15px;
             border: 1px solid var(--border-color);
-            transition: background 0.3s;
-        }
-        
-        .metric-card:hover {
-            background: var(--bg-card-hover);
         }
         
         .metric-card .label {
             color: var(--text-secondary);
             font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             margin-bottom: 5px;
         }
         
-        .metric-card .value {
-            font-size: 1.3rem;
-            font-weight: bold;
-        }
-        
-        .metric-card .gold-value {
-            color: var(--gold);
-            font-size: 0.95rem;
-            margin-top: 3px;
-        }
+        .metric-card .value { font-size: 1.3rem; font-weight: bold; }
+        .metric-card .gold-value { color: var(--gold); font-size: 0.95rem; margin-top: 3px; }
         
         .highlight-box {
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 179, 71, 0.1));
@@ -325,15 +327,7 @@
             margin-bottom: 30px;
         }
         
-        [data-theme="light"] .highlight-box {
-            background: linear-gradient(135deg, rgba(201, 160, 0, 0.1), rgba(230, 168, 0, 0.1));
-            border: 1px solid rgba(201, 160, 0, 0.4);
-        }
-        
-        .highlight-box h3 {
-            color: var(--gold);
-            margin-bottom: 15px;
-        }
+        .highlight-box h3 { color: var(--gold); margin-bottom: 15px; }
         
         .highlight-row {
             display: flex;
@@ -343,15 +337,9 @@
             border-bottom: 1px solid var(--border-color);
         }
         
-        .highlight-row:last-child {
-            border-bottom: none;
-        }
+        .highlight-row:last-child { border-bottom: none; }
         
-        .loading {
-            text-align: center;
-            padding: 50px;
-            color: var(--text-secondary);
-        }
+        .loading { text-align: center; padding: 50px; color: var(--text-secondary); }
         
         .error {
             background: rgba(248, 113, 113, 0.2);
@@ -369,58 +357,24 @@
             font-size: 0.9rem;
         }
         
-        footer a {
-            color: var(--gold);
-            text-decoration: none;
-        }
+        footer a { color: var(--gold); text-decoration: none; }
         
-        footer a:hover {
-            text-decoration: underline;
-        }
-        
-        /* SEO Content Section */
         .seo-content {
             margin-top: 60px;
             padding-top: 40px;
             border-top: 1px solid var(--border-color);
         }
         
-        .seo-content h2 {
-            color: var(--gold);
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
-        
-        .seo-content h3 {
-            color: var(--text-primary);
-            margin: 25px 0 15px;
-            font-size: 1.3rem;
-        }
-        
-        .seo-content p {
-            color: var(--text-secondary);
-            line-height: 1.7;
-            margin-bottom: 15px;
-            max-width: 800px;
-        }
-        
-        .seo-content ul {
-            color: var(--text-secondary);
-            margin-left: 20px;
-            margin-bottom: 15px;
-            line-height: 1.8;
-        }
+        .seo-content h2 { color: var(--gold); margin-bottom: 20px; font-size: 1.8rem; }
+        .seo-content h3 { color: var(--text-primary); margin: 25px 0 15px; font-size: 1.3rem; }
+        .seo-content p { color: var(--text-secondary); line-height: 1.7; margin-bottom: 15px; max-width: 800px; }
+        .seo-content ul { color: var(--text-secondary); margin-left: 20px; margin-bottom: 15px; line-height: 1.8; }
         
         @media (max-width: 600px) {
             h1 { font-size: 1.8rem; }
             .controls { flex-direction: column; }
-            .controls input, .controls select, .controls button {
-                width: 100%;
-            }
-            .theme-toggle {
-                position: static;
-                margin-bottom: 15px;
-            }
+            .controls input, .controls select, .controls button { width: 100%; }
+            .theme-toggle { position: static; margin-bottom: 15px; }
         }
     </style>
 </head>
@@ -435,8 +389,8 @@
         </header>
         
         <div class="controls">
-            <input type="text" id="ticker" placeholder="Enter ticker (e.g., AAPL, TSLA, MSFT)" value="AAPL" aria-label="Stock ticker symbol">
-            <select id="years" aria-label="Time period">
+            <input type="text" id="ticker" placeholder="Enter ticker (e.g., AAPL, TSLA)" value="AAPL">
+            <select id="years">
                 <option value="1">1 Year</option>
                 <option value="5">5 Years</option>
                 <option value="10" selected>10 Years</option>
@@ -445,10 +399,9 @@
             <button id="fetchBtn" onclick="fetchData()">Analyze</button>
         </div>
         
-        <div id="error" class="error" style="display: none;" role="alert"></div>
+        <div id="error" class="error" style="display: none;"></div>
         
         <div id="results" style="display: none;">
-            <!-- Price Summary Cards -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <h3>💵 Price in USD</h3>
@@ -467,25 +420,40 @@
                 </div>
             </div>
             
-            <!-- Chart Section (moved up) -->
-            <div class="toggle-container">
-                <label>
-                    <input type="checkbox" id="showGold" checked onchange="updateChart()">
-                    Show Gold Price (oz)
-                </label>
-                <label>
-                    <input type="checkbox" id="showUsd" onchange="updateChart()">
-                    Show USD Price
-                </label>
+            <!-- Technical Analysis Toggles -->
+            <div class="toggle-section">
+                <h4>📉 Chart Options & Technical Analysis</h4>
+                <div class="toggle-grid">
+                    <label><input type="checkbox" id="showGold" checked onchange="updateChart()"> Gold Price (oz)</label>
+                    <label><input type="checkbox" id="showUsd" onchange="updateChart()"> USD Price</label>
+                    <label><input type="checkbox" id="showSMA20" onchange="updateChart()"> SMA 20</label>
+                    <label><input type="checkbox" id="showSMA50" onchange="updateChart()"> SMA 50</label>
+                    <label><input type="checkbox" id="showSMA200" onchange="updateChart()"> SMA 200</label>
+                    <label><input type="checkbox" id="showEMA" onchange="updateChart()"> EMA 12/26</label>
+                    <label><input type="checkbox" id="showBB" onchange="updateChart()"> Bollinger Bands</label>
+                </div>
             </div>
             
+            <!-- Main Chart -->
             <div class="chart-container">
                 <h3 class="chart-title" id="chartTitle">-</h3>
-                <canvas id="priceChart" aria-label="Stock price chart comparing USD and Gold values"></canvas>
+                <canvas id="priceChart"></canvas>
             </div>
             
-            <!-- Market Cap in Gold Highlight -->
-            <div class="highlight-box" id="marketCapBox">
+            <!-- RSI Indicator -->
+            <div class="rsi-indicator" id="rsiIndicator">
+                <div>
+                    <div class="rsi-label">RSI (14)</div>
+                    <div class="rsi-value" id="rsiValue">-</div>
+                </div>
+                <div class="rsi-bar">
+                    <div class="rsi-marker" id="rsiMarker" style="left: 50%;"></div>
+                </div>
+                <div class="rsi-label" id="rsiSignal">-</div>
+            </div>
+            
+            <!-- Market Cap -->
+            <div class="highlight-box">
                 <h3>🏦 Market Capitalization</h3>
                 <div class="highlight-row">
                     <span>In USD</span>
@@ -501,109 +469,54 @@
                 </div>
             </div>
             
-            <!-- Key Metrics Section -->
+            <!-- Key Metrics -->
             <div class="metrics-section">
                 <h2>📊 Key Metrics</h2>
                 <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="label">P/E Ratio (TTM)</div>
-                        <div class="value" id="peRatio">-</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="label">Forward P/E</div>
-                        <div class="value" id="forwardPe">-</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="label">PEG Ratio</div>
-                        <div class="value" id="pegRatio">-</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="label">Price to Book</div>
-                        <div class="value" id="priceToBook">-</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="label">EPS (TTM)</div>
-                        <div class="value" id="eps">-</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="label">Dividend Yield</div>
-                        <div class="value" id="dividendYield">-</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="label">Profit Margin</div>
-                        <div class="value" id="profitMargin">-</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="label">Debt to Equity</div>
-                        <div class="value" id="debtToEquity">-</div>
-                    </div>
+                    <div class="metric-card"><div class="label">P/E Ratio (TTM)</div><div class="value" id="peRatio">-</div></div>
+                    <div class="metric-card"><div class="label">Forward P/E</div><div class="value" id="forwardPe">-</div></div>
+                    <div class="metric-card"><div class="label">PEG Ratio</div><div class="value" id="pegRatio">-</div></div>
+                    <div class="metric-card"><div class="label">Price to Book</div><div class="value" id="priceToBook">-</div></div>
+                    <div class="metric-card"><div class="label">EPS (TTM)</div><div class="value" id="eps">-</div></div>
+                    <div class="metric-card"><div class="label">Dividend Yield</div><div class="value" id="dividendYield">-</div></div>
+                    <div class="metric-card"><div class="label">Profit Margin</div><div class="value" id="profitMargin">-</div></div>
+                    <div class="metric-card"><div class="label">Debt to Equity</div><div class="value" id="debtToEquity">-</div></div>
                 </div>
             </div>
             
-            <!-- Financials in Gold Section -->
+            <!-- Financials in Gold -->
             <div class="metrics-section">
                 <h2>🥇 Financials in Gold</h2>
                 <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="label">Revenue</div>
-                        <div class="value" id="revenueUsd">-</div>
-                        <div class="gold-value" id="revenueGold">-</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="label">Free Cash Flow</div>
-                        <div class="value" id="fcfUsd">-</div>
-                        <div class="gold-value" id="fcfGold">-</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="label">52 Week High</div>
-                        <div class="value" id="high52w">-</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="label">52 Week Low</div>
-                        <div class="value" id="low52w">-</div>
-                    </div>
+                    <div class="metric-card"><div class="label">Revenue</div><div class="value" id="revenueUsd">-</div><div class="gold-value" id="revenueGold">-</div></div>
+                    <div class="metric-card"><div class="label">Free Cash Flow</div><div class="value" id="fcfUsd">-</div><div class="gold-value" id="fcfGold">-</div></div>
+                    <div class="metric-card"><div class="label">52 Week High</div><div class="value" id="high52w">-</div></div>
+                    <div class="metric-card"><div class="label">52 Week Low</div><div class="value" id="low52w">-</div></div>
                 </div>
             </div>
         </div>
         
-        <div id="loading" class="loading" style="display: none;">
-            Loading data...
-        </div>
+        <div id="loading" class="loading" style="display: none;">Loading data...</div>
         
-        <!-- SEO Content Section -->
         <section class="seo-content">
             <h2>Why Measure Stock Prices in Gold?</h2>
-            <p>
-                When you look at stock prices in dollars, you're seeing a distorted picture. The US dollar has lost over 95% of its purchasing power since 1913, and continues to lose value due to inflation and monetary expansion. Gold, however, has maintained its purchasing power for thousands of years.
-            </p>
+            <p>When you look at stock prices in dollars, you're seeing a distorted picture. The US dollar has lost over 95% of its purchasing power since 1913. Gold has maintained its purchasing power for thousands of years.</p>
             
-            <h3>The Problem with Fiat Currency Measurements</h3>
-            <p>
-                A stock that went from $10 to $100 over 20 years might seem like a 10x return. But if the dollar lost 60% of its purchasing power during that time, your "gains" are largely an illusion. You need 2.5x more dollars just to maintain the same purchasing power.
-            </p>
-            
-            <h3>Gold as a Stable Measuring Stick</h3>
-            <p>
-                Gold has been money for over 5,000 years. Unlike fiat currencies, it cannot be printed or debased by governments. When you measure stock prices in gold ounces, you see the real value creation (or destruction) of a company over time.
-            </p>
-            
-            <h3>What This Tool Shows You</h3>
+            <h3>Technical Analysis in Gold Terms</h3>
+            <p>Our tool provides technical indicators calculated on gold-denominated prices, giving you a unique perspective on real momentum and trends:</p>
             <ul>
-                <li><strong>Price in Gold (oz):</strong> How many ounces of gold one share costs</li>
-                <li><strong>Real vs Nominal Returns:</strong> The difference between USD gains and gold-adjusted gains</li>
-                <li><strong>Market Cap in Gold:</strong> The company's total value measured in gold ounces</li>
-                <li><strong>Key Metrics:</strong> P/E ratio, PEG, dividend yield, and more</li>
+                <li><strong>Moving Averages (SMA/EMA):</strong> Track trends in real purchasing power</li>
+                <li><strong>RSI:</strong> Identify overbought/oversold conditions in gold terms</li>
+                <li><strong>Bollinger Bands:</strong> See volatility relative to gold value</li>
             </ul>
             
             <h3>How to Use Stock vs Gold</h3>
-            <p>
-                Enter any stock ticker symbol (like AAPL for Apple, TSLA for Tesla, or MSFT for Microsoft), select your time period, and click Analyze. The tool will fetch historical data and calculate the stock's price in gold terms, showing you the real performance beyond inflation.
-            </p>
+            <p>Enter any stock ticker symbol (like AAPL for Apple, TSLA for Tesla, or MSFT for Microsoft), select your time period, and click Analyze. Toggle technical indicators to overlay them on the chart.</p>
         </section>
         
         <footer>
             <p>Data from Yahoo Finance • Gold = Gold Futures (GC=F)</p>
-            <p>Built with ⚡ by <a href="https://github.com/robapuros/stock-vs-gold">clawdbot</a> | <a href="https://github.com/robapuros/stock-vs-gold">View on GitHub</a></p>
+            <p>Built with ⚡ | <a href="https://github.com/robapuros/stock-vs-gold">View on GitHub</a></p>
         </footer>
     </div>
     
@@ -611,7 +524,6 @@
         let chartInstance = null;
         let currentData = null;
         
-        // Theme handling
         function toggleTheme() {
             const body = document.body;
             const icon = document.getElementById('themeIcon');
@@ -624,13 +536,9 @@
                 icon.textContent = '☀️';
                 localStorage.setItem('theme', 'dark');
             }
-            // Update chart colors if exists
-            if (chartInstance) {
-                updateChart();
-            }
+            if (chartInstance) updateChart();
         }
         
-        // Load saved theme
         function loadTheme() {
             const saved = localStorage.getItem('theme');
             if (saved === 'light') {
@@ -660,12 +568,8 @@
             const ticker = document.getElementById('ticker').value.trim().toUpperCase();
             const years = document.getElementById('years').value;
             
-            if (!ticker) {
-                showError('Please enter a ticker symbol');
-                return;
-            }
+            if (!ticker) { showError('Please enter a ticker symbol'); return; }
             
-            // Update URL for shareability
             const url = new URL(window.location);
             url.searchParams.set('ticker', ticker);
             url.searchParams.set('years', years);
@@ -680,20 +584,14 @@
                 const response = await fetch(`/api/data?ticker=${ticker}&years=${years}`);
                 const data = await response.json();
                 
-                if (data.error) {
-                    showError(data.error);
-                    return;
-                }
+                if (data.error) { showError(data.error); return; }
                 
                 currentData = data;
                 displayResults(data);
-                
-                // Update page title for SEO
                 document.title = `${data.ticker} Stock Price in Gold | Stock vs Gold`;
                 
             } catch (err) {
                 showError('Failed to fetch data. Please try again.');
-                console.error(err);
             } finally {
                 document.getElementById('fetchBtn').disabled = false;
                 document.getElementById('loading').style.display = 'none';
@@ -708,40 +606,42 @@
         function displayResults(data) {
             const stats = data.stats;
             const metrics = data.metrics;
+            const tech = data.technical;
             
-            // USD stats
             document.getElementById('usdPrice').textContent = `$${stats.end_price_usd.toLocaleString()}`;
             const usdChangeEl = document.getElementById('usdChange');
-            usdChangeEl.textContent = `${stats.change_usd_pct >= 0 ? '+' : ''}${stats.change_usd_pct}% (from $${stats.start_price_usd.toLocaleString()})`;
+            usdChangeEl.textContent = `${stats.change_usd_pct >= 0 ? '+' : ''}${stats.change_usd_pct}%`;
             usdChangeEl.className = 'change ' + (stats.change_usd_pct >= 0 ? 'positive' : 'negative');
             
-            // Gold stats
             document.getElementById('goldPrice').textContent = `${stats.end_price_gold.toFixed(4)} oz`;
             const goldChangeEl = document.getElementById('goldChange');
-            goldChangeEl.textContent = `${stats.change_gold_pct >= 0 ? '+' : ''}${stats.change_gold_pct}% (from ${stats.start_price_gold.toFixed(4)} oz)`;
+            goldChangeEl.textContent = `${stats.change_gold_pct >= 0 ? '+' : ''}${stats.change_gold_pct}%`;
             goldChangeEl.className = 'change ' + (stats.change_gold_pct >= 0 ? 'positive' : 'negative');
             
-            // Difference
             const diff = stats.change_usd_pct - stats.change_gold_pct;
             const diffEl = document.getElementById('difference');
             diffEl.textContent = `${diff >= 0 ? '+' : ''}${diff.toFixed(1)}%`;
             diffEl.className = 'value ' + (diff >= 0 ? 'positive' : 'negative');
+            document.getElementById('diffExplain').textContent = diff > 0 ? 'USD overstated' : 'Lost real value';
             
-            const explainEl = document.getElementById('diffExplain');
-            if (diff > 0) {
-                explainEl.textContent = 'USD gains overstated vs gold';
-            } else if (diff < 0) {
-                explainEl.textContent = 'Stock lost value in real (gold) terms';
-            } else {
-                explainEl.textContent = 'Same performance in both';
+            // RSI
+            const rsi = tech.current_rsi;
+            document.getElementById('rsiValue').textContent = rsi ? rsi.toFixed(1) : '-';
+            if (rsi) {
+                document.getElementById('rsiMarker').style.left = `${rsi}%`;
+                let signal = 'Neutral';
+                let color = 'var(--text-secondary)';
+                if (rsi > 70) { signal = 'Overbought'; color = 'var(--negative)'; }
+                else if (rsi < 30) { signal = 'Oversold'; color = 'var(--positive)'; }
+                document.getElementById('rsiSignal').textContent = signal;
+                document.getElementById('rsiSignal').style.color = color;
+                document.getElementById('rsiValue').style.color = color;
             }
             
-            // Market Cap
             document.getElementById('marketCapUsd').textContent = metrics.market_cap_usd ? '$' + formatNumber(metrics.market_cap_usd) : '-';
             document.getElementById('marketCapGold').textContent = metrics.market_cap_gold ? formatGoldOz(metrics.market_cap_gold) : '-';
             document.getElementById('currentGoldPrice').textContent = metrics.current_gold_price ? '$' + metrics.current_gold_price.toLocaleString() + '/oz' : '-';
             
-            // Key Metrics
             document.getElementById('peRatio').textContent = metrics.pe_ratio ?? '-';
             document.getElementById('forwardPe').textContent = metrics.forward_pe ?? '-';
             document.getElementById('pegRatio').textContent = metrics.peg_ratio ?? '-';
@@ -751,7 +651,6 @@
             document.getElementById('profitMargin').textContent = metrics.profit_margin ? metrics.profit_margin + '%' : '-';
             document.getElementById('debtToEquity').textContent = metrics.debt_to_equity ?? '-';
             
-            // Financials in Gold
             document.getElementById('revenueUsd').textContent = metrics.revenue_usd ? '$' + formatNumber(metrics.revenue_usd) : '-';
             document.getElementById('revenueGold').textContent = metrics.revenue_gold ? '🥇 ' + formatGoldOz(metrics.revenue_gold) : '-';
             document.getElementById('fcfUsd').textContent = metrics.free_cash_flow_usd ? '$' + formatNumber(metrics.free_cash_flow_usd) : '-';
@@ -759,9 +658,7 @@
             document.getElementById('high52w').textContent = metrics['52w_high'] ? '$' + metrics['52w_high'].toLocaleString() : '-';
             document.getElementById('low52w').textContent = metrics['52w_low'] ? '$' + metrics['52w_low'].toLocaleString() : '-';
             
-            document.getElementById('chartTitle').textContent = 
-                `${data.company_name} (${data.ticker}) - Price History`;
-            
+            document.getElementById('chartTitle').textContent = `${data.company_name} (${data.ticker}) - Price History`;
             document.getElementById('results').style.display = 'block';
             updateChart();
         }
@@ -769,125 +666,175 @@
         function updateChart() {
             if (!currentData) return;
             
-            const showGold = document.getElementById('showGold').checked;
-            const showUsd = document.getElementById('showUsd').checked;
             const isDark = document.body.dataset.theme === 'dark';
-            
             const textColor = isDark ? '#888' : '#555';
             const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
             const goldColor = isDark ? '#ffd700' : '#c9a000';
             const greenColor = isDark ? '#4ade80' : '#16a34a';
             
             const datasets = [];
+            const tech = currentData.technical;
             
-            if (showGold) {
+            if (document.getElementById('showGold').checked) {
                 datasets.push({
                     label: 'Price in Gold (oz)',
                     data: currentData.stock_in_gold,
                     borderColor: goldColor,
-                    backgroundColor: isDark ? 'rgba(255, 215, 0, 0.1)' : 'rgba(201, 160, 0, 0.1)',
-                    fill: true,
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
                     tension: 0.1,
                     yAxisID: 'y'
                 });
             }
             
-            if (showUsd) {
+            if (document.getElementById('showUsd').checked) {
                 datasets.push({
                     label: 'Price in USD',
                     data: currentData.stock_usd,
                     borderColor: greenColor,
-                    backgroundColor: isDark ? 'rgba(74, 222, 128, 0.1)' : 'rgba(22, 163, 74, 0.1)',
-                    fill: true,
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
                     tension: 0.1,
                     yAxisID: 'y1'
                 });
             }
             
+            if (document.getElementById('showSMA20').checked && tech.sma_20) {
+                datasets.push({
+                    label: 'SMA 20',
+                    data: tech.sma_20,
+                    borderColor: '#ff6b6b',
+                    borderWidth: 1.5,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    tension: 0.1,
+                    yAxisID: 'y'
+                });
+            }
+            
+            if (document.getElementById('showSMA50').checked && tech.sma_50) {
+                datasets.push({
+                    label: 'SMA 50',
+                    data: tech.sma_50,
+                    borderColor: '#4ecdc4',
+                    borderWidth: 1.5,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    tension: 0.1,
+                    yAxisID: 'y'
+                });
+            }
+            
+            if (document.getElementById('showSMA200').checked && tech.sma_200) {
+                datasets.push({
+                    label: 'SMA 200',
+                    data: tech.sma_200,
+                    borderColor: '#a855f7',
+                    borderWidth: 1.5,
+                    borderDash: [5, 5],
+                    pointRadius: 0,
+                    tension: 0.1,
+                    yAxisID: 'y'
+                });
+            }
+            
+            if (document.getElementById('showEMA').checked && tech.ema_12 && tech.ema_26) {
+                datasets.push({
+                    label: 'EMA 12',
+                    data: tech.ema_12,
+                    borderColor: '#f97316',
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    tension: 0.1,
+                    yAxisID: 'y'
+                });
+                datasets.push({
+                    label: 'EMA 26',
+                    data: tech.ema_26,
+                    borderColor: '#06b6d4',
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    tension: 0.1,
+                    yAxisID: 'y'
+                });
+            }
+            
+            if (document.getElementById('showBB').checked && tech.bb_upper && tech.bb_lower) {
+                datasets.push({
+                    label: 'BB Upper',
+                    data: tech.bb_upper,
+                    borderColor: 'rgba(168, 85, 247, 0.5)',
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    fill: false,
+                    yAxisID: 'y'
+                });
+                datasets.push({
+                    label: 'BB Lower',
+                    data: tech.bb_lower,
+                    borderColor: 'rgba(168, 85, 247, 0.5)',
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    fill: '-1',
+                    backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                    yAxisID: 'y'
+                });
+            }
+            
             const ctx = document.getElementById('priceChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
             
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
-            
-            const scales = {
-                x: {
-                    ticks: { color: textColor, maxTicksLimit: 10 },
-                    grid: { color: gridColor }
-                },
-                y: {
-                    type: 'linear',
-                    display: showGold,
-                    position: 'left',
-                    title: { display: true, text: 'Gold (oz)', color: goldColor },
-                    ticks: { color: goldColor },
-                    grid: { color: isDark ? 'rgba(255,215,0,0.1)' : 'rgba(201,160,0,0.1)' }
-                }
-            };
-            
-            if (showUsd) {
-                scales.y1 = {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    title: { display: true, text: 'USD ($)', color: greenColor },
-                    ticks: { color: greenColor },
-                    grid: { drawOnChartArea: false }
-                };
-            }
+            const showUsd = document.getElementById('showUsd').checked;
             
             chartInstance = new Chart(ctx, {
                 type: 'line',
-                data: {
-                    labels: currentData.dates,
-                    datasets: datasets
-                },
+                data: { labels: currentData.dates, datasets: datasets },
                 options: {
                     responsive: true,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
+                    interaction: { mode: 'index', intersect: false },
                     plugins: {
-                        legend: {
-                            labels: { color: textColor }
-                        },
+                        legend: { labels: { color: textColor } },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    if (context.dataset.yAxisID === 'y') {
-                                        return `${context.dataset.label}: ${context.raw.toFixed(4)} oz`;
-                                    }
-                                    return `${context.dataset.label}: $${context.raw.toLocaleString()}`;
+                                    if (context.dataset.yAxisID === 'y1') return `${context.dataset.label}: $${context.raw?.toLocaleString() || '-'}`;
+                                    return `${context.dataset.label}: ${context.raw?.toFixed(4) || '-'} oz`;
                                 }
                             }
                         }
                     },
-                    scales: scales
+                    scales: {
+                        x: { ticks: { color: textColor, maxTicksLimit: 10 }, grid: { color: gridColor } },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: { display: true, text: 'Gold (oz)', color: goldColor },
+                            ticks: { color: goldColor },
+                            grid: { color: gridColor }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: showUsd,
+                            position: 'right',
+                            title: { display: true, text: 'USD ($)', color: greenColor },
+                            ticks: { color: greenColor },
+                            grid: { drawOnChartArea: false }
+                        }
+                    }
                 }
             });
         }
         
-        // Allow Enter key to submit
-        document.getElementById('ticker').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') fetchData();
-        });
+        document.getElementById('ticker').addEventListener('keypress', (e) => { if (e.key === 'Enter') fetchData(); });
         
-        // Load from URL params
         function loadFromUrl() {
             const params = new URLSearchParams(window.location.search);
-            const ticker = params.get('ticker');
-            const years = params.get('years');
-            if (ticker) document.getElementById('ticker').value = ticker;
-            if (years) document.getElementById('years').value = years;
+            if (params.get('ticker')) document.getElementById('ticker').value = params.get('ticker');
+            if (params.get('years')) document.getElementById('years').value = params.get('years');
         }
         
-        // Initialize
-        window.onload = function() {
-            loadTheme();
-            loadFromUrl();
-            fetchData();
-        };
+        window.onload = function() { loadTheme(); loadFromUrl(); fetchData(); };
     </script>
 </body>
 </html>
