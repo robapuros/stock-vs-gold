@@ -3,382 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>Stock vs Gold - Compare Stock Prices in Gold | Real Value Calculator</title>
-    <meta name="description" content="See stock prices measured in gold instead of fiat currency. Compare any stock's real purchasing power over time. Track market cap, P/E ratio, and key metrics in gold terms.">
-    <meta name="keywords" content="stock price gold, stock vs gold, gold price comparison, real stock value, inflation adjusted stock price, stock market cap gold, stock gold calculator, gold standard stocks, technical analysis">
-    <meta name="author" content="Stock vs Gold">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://stocksvsgold.com/">
-    
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://stocksvsgold.com/">
-    <meta property="og:title" content="Stock vs Gold - See Stock Prices in Real (Gold) Terms">
-    <meta property="og:description" content="Compare any stock's price measured in gold instead of fiat. See the real value beyond inflation.">
-    
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Stock vs Gold - See Stock Prices in Real (Gold) Terms">
-    
+    <meta name="description" content="See stock prices measured in gold with advanced technical analysis. RSI, MACD, Bollinger Bands, Volume analysis and more.">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.1/dist/chartjs-chart-financial.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.umd.min.js"></script>
     <style>
         :root {
-            --bg-primary: #1a1a2e;
-            --bg-secondary: #16213e;
-            --bg-card: rgba(255, 255, 255, 0.05);
-            --bg-card-hover: rgba(255, 255, 255, 0.08);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --text-primary: #eee;
-            --text-secondary: #888;
-            --text-muted: #666;
-            --gold: #ffd700;
-            --gold-secondary: #ffb347;
-            --positive: #4ade80;
-            --negative: #f87171;
-            --input-bg: #2a2a4a;
-            --input-border: #3a3a5a;
+            --bg-primary: #0d1117; --bg-secondary: #161b22; --bg-card: #21262d;
+            --border-color: #30363d; --text-primary: #c9d1d9; --text-secondary: #8b949e;
+            --gold: #f0b90b; --positive: #26a69a; --negative: #ef5350;
+            --input-bg: #21262d; --input-border: #30363d;
         }
-        
         [data-theme="light"] {
-            --bg-primary: #f5f5f7;
-            --bg-secondary: #ffffff;
-            --bg-card: rgba(0, 0, 0, 0.03);
-            --bg-card-hover: rgba(0, 0, 0, 0.06);
-            --border-color: rgba(0, 0, 0, 0.1);
-            --text-primary: #1a1a2e;
-            --text-secondary: #555;
-            --text-muted: #888;
-            --gold: #c9a000;
-            --gold-secondary: #e6a800;
-            --positive: #16a34a;
-            --negative: #dc2626;
-            --input-bg: #ffffff;
-            --input-border: #ddd;
+            --bg-primary: #ffffff; --bg-secondary: #f6f8fa; --bg-card: #ffffff;
+            --border-color: #d0d7de; --text-primary: #24292f; --text-secondary: #57606a;
+            --gold: #d4a000; --positive: #1a7f37; --negative: #cf222e;
+            --input-bg: #ffffff; --input-border: #d0d7de;
         }
-        
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+        .container { max-width: 1600px; margin: 0 auto; padding: 15px; }
         
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-            color: var(--text-primary);
-            min-height: 100vh;
-            padding: 20px;
-            transition: background 0.3s, color 0.3s;
-        }
+        /* Header */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .logo { display: flex; align-items: center; gap: 10px; }
+        .logo h1 { font-size: 1.5rem; background: linear-gradient(90deg, var(--gold), #fcd535); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header-controls { display: flex; gap: 10px; align-items: center; }
+        .theme-toggle { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; padding: 8px 12px; cursor: pointer; font-size: 1rem; color: var(--text-primary); }
         
-        .container { max-width: 1400px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 30px; position: relative; }
-        
-        .theme-toggle {
-            position: absolute; top: 0; right: 0;
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 50px; padding: 8px 16px; cursor: pointer; font-size: 1.2rem;
-        }
-        
-        h1 {
-            font-size: 2.5rem; margin-bottom: 10px;
-            background: linear-gradient(90deg, var(--gold), var(--gold-secondary));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        
-        .subtitle { color: var(--text-secondary); font-size: 1.1rem; }
-        
-        .controls { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px; }
-        
-        .search-container { position: relative; flex: 1; max-width: 300px; min-width: 200px; }
-        
-        input, select, button { padding: 12px 20px; font-size: 1rem; border: none; border-radius: 8px; }
-        input, select { background: var(--input-bg); color: var(--text-primary); border: 1px solid var(--input-border); width: 100%; }
+        /* Search */
+        .search-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .search-container { position: relative; flex: 1; min-width: 200px; max-width: 350px; }
+        input, select { padding: 10px 14px; font-size: 0.95rem; border: 1px solid var(--border-color); border-radius: 6px; background: var(--input-bg); color: var(--text-primary); }
         input:focus, select:focus { outline: none; border-color: var(--gold); }
+        .search-container input { width: 100%; }
+        button { padding: 10px 20px; font-size: 0.95rem; border: none; border-radius: 6px; background: var(--gold); color: #000; font-weight: 600; cursor: pointer; }
+        button:hover { opacity: 0.9; }
         
-        .autocomplete-list {
-            position: absolute; top: 100%; left: 0; right: 0;
-            background: var(--bg-secondary); border: 1px solid var(--border-color);
-            border-radius: 8px; margin-top: 4px; max-height: 300px; overflow-y: auto;
-            z-index: 1000; display: none;
-        }
+        .autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; margin-top: 4px; max-height: 250px; overflow-y: auto; z-index: 1000; display: none; }
+        .autocomplete-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border-color); }
+        .autocomplete-item:hover { background: var(--bg-secondary); }
+        .autocomplete-symbol { font-weight: 600; color: var(--gold); }
+        .autocomplete-name { font-size: 0.85rem; color: var(--text-secondary); margin-left: 8px; }
         
-        .autocomplete-item {
-            padding: 12px 16px; cursor: pointer; border-bottom: 1px solid var(--border-color);
-        }
-        
-        .autocomplete-item:hover { background: var(--bg-card-hover); }
-        .autocomplete-item:last-child { border-bottom: none; }
-        .autocomplete-symbol { font-weight: bold; color: var(--gold); }
-        .autocomplete-name { font-size: 0.9rem; color: var(--text-secondary); margin-left: 10px; }
-        .autocomplete-exchange { font-size: 0.75rem; color: var(--text-muted); float: right; }
-        
-        button {
-            background: linear-gradient(90deg, var(--gold), var(--gold-secondary));
-            color: #1a1a2e; font-weight: bold; cursor: pointer;
-        }
-        button:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        
-        .stat-card {
-            background: var(--bg-card); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color);
-        }
-        .stat-card h3 { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 10px; text-transform: uppercase; }
-        .stat-card .value { font-size: 1.8rem; font-weight: bold; }
-        .stat-card .change { font-size: 1.1rem; margin-top: 5px; }
-        
+        /* Stats Bar */
+        .stats-bar { display: flex; gap: 20px; padding: 12px 15px; background: var(--bg-card); border-radius: 8px; margin-bottom: 15px; flex-wrap: wrap; border: 1px solid var(--border-color); }
+        .stat-item { display: flex; flex-direction: column; }
+        .stat-label { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; }
+        .stat-value { font-size: 1.1rem; font-weight: 600; }
+        .stat-change { font-size: 0.85rem; }
         .positive { color: var(--positive); }
         .negative { color: var(--negative); }
-        .gold { color: var(--gold); }
+        .gold-text { color: var(--gold); }
         
-        .chart-container { background: var(--bg-card); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 30px; }
-        .chart-title { text-align: center; margin-bottom: 15px; color: var(--text-secondary); }
+        /* Chart Controls */
+        .chart-controls { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
+        .chart-controls label { display: flex; align-items: center; gap: 5px; font-size: 0.85rem; padding: 6px 10px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer; }
+        .chart-controls label:hover { border-color: var(--gold); }
+        .chart-controls input:checked + span { color: var(--gold); }
+        .control-group { display: flex; gap: 5px; padding: 4px; background: var(--bg-secondary); border-radius: 6px; }
+        .control-btn { padding: 6px 12px; font-size: 0.8rem; border: none; background: transparent; color: var(--text-secondary); cursor: pointer; border-radius: 4px; }
+        .control-btn.active { background: var(--gold); color: #000; }
         
-        .toggle-section { background: var(--bg-card); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 20px; }
-        .toggle-section h4 { color: var(--gold); margin-bottom: 15px; font-size: 1rem; }
-        .toggle-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-        .toggle-grid label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; padding: 8px; border-radius: 6px; }
-        .toggle-grid label:hover { background: var(--bg-card-hover); }
+        /* Charts Container */
+        .charts-wrapper { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .chart-title { font-size: 1rem; color: var(--text-secondary); margin-bottom: 10px; }
+        .main-chart { height: 400px; margin-bottom: 10px; }
+        .sub-chart { height: 120px; margin-bottom: 10px; border-top: 1px solid var(--border-color); padding-top: 10px; }
+        .sub-chart-label { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 5px; }
         
-        .rsi-indicator {
-            background: var(--bg-card); border-radius: 8px; padding: 15px; margin-top: 15px;
-            display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
-        }
-        .rsi-value { font-size: 2rem; font-weight: bold; }
-        .rsi-label { color: var(--text-secondary); font-size: 0.9rem; }
-        .rsi-bar { flex: 1; min-width: 200px; height: 20px; background: linear-gradient(90deg, var(--negative) 0%, var(--positive) 100%); border-radius: 10px; position: relative; }
-        .rsi-marker { position: absolute; top: -5px; width: 4px; height: 30px; background: var(--text-primary); border-radius: 2px; transform: translateX(-50%); }
+        /* Indicator Values */
+        .indicator-values { display: flex; gap: 15px; padding: 10px; background: var(--bg-secondary); border-radius: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+        .indicator-item { font-size: 0.85rem; }
+        .indicator-name { color: var(--text-secondary); }
+        .indicator-value { font-weight: 600; margin-left: 5px; }
         
-        .collapsible-section { margin-bottom: 30px; }
-        .collapsible-header {
-            background: var(--bg-card); border-radius: 12px; padding: 15px 20px;
-            border: 1px solid var(--border-color); cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .collapsible-header h2 { color: var(--gold); font-size: 1.3rem; margin: 0; }
-        .collapsible-header .toggle-icon { font-size: 1.5rem; transition: transform 0.3s; }
-        .collapsible-header.open .toggle-icon { transform: rotate(180deg); }
-        .collapsible-content { display: none; padding-top: 15px; }
-        .collapsible-content.open { display: block; }
+        /* Metrics Section */
+        .metrics-toggle { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 15px; }
+        .metrics-header { padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .metrics-header h3 { font-size: 1rem; color: var(--gold); }
+        .metrics-content { display: none; padding: 15px; border-top: 1px solid var(--border-color); }
+        .metrics-content.open { display: block; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+        .metric-card { padding: 10px; background: var(--bg-secondary); border-radius: 6px; }
+        .metric-label { font-size: 0.75rem; color: var(--text-secondary); }
+        .metric-value { font-size: 1.1rem; font-weight: 600; }
+        .metric-gold { font-size: 0.85rem; color: var(--gold); }
         
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        .metric-card { background: var(--bg-card); border-radius: 8px; padding: 15px; border: 1px solid var(--border-color); }
-        .metric-card .label { color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; }
-        .metric-card .value { font-size: 1.3rem; font-weight: bold; }
-        .metric-card .gold-value { color: var(--gold); font-size: 0.95rem; margin-top: 3px; }
-        
-        .highlight-box {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 179, 71, 0.1));
-            border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 12px; padding: 20px; margin-bottom: 30px;
-        }
-        .highlight-box h3 { color: var(--gold); margin-bottom: 15px; }
-        .highlight-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
-        .highlight-row:last-child { border-bottom: none; }
-        
-        .suggestions-box {
-            background: var(--bg-card); border-radius: 12px; padding: 20px;
-            border: 1px solid var(--border-color); margin-bottom: 20px;
-        }
-        .suggestions-box h4 { color: var(--gold); margin-bottom: 15px; }
-        .suggestion-item { display: inline-block; margin: 5px; padding: 8px 16px; background: var(--bg-card-hover); border-radius: 20px; cursor: pointer; }
-        .suggestion-item:hover { background: var(--gold); color: #1a1a2e; }
+        .suggestions-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .suggestion-item { display: inline-block; margin: 5px; padding: 8px 14px; background: var(--bg-secondary); border-radius: 20px; cursor: pointer; font-size: 0.9rem; }
+        .suggestion-item:hover { background: var(--gold); color: #000; }
         
         .loading { text-align: center; padding: 50px; color: var(--text-secondary); }
-        .error { background: rgba(248, 113, 113, 0.2); border: 1px solid var(--negative); border-radius: 8px; padding: 15px; text-align: center; margin-bottom: 20px; }
+        .error { background: rgba(239, 83, 80, 0.1); border: 1px solid var(--negative); border-radius: 8px; padding: 15px; margin-bottom: 15px; }
         
-        footer { text-align: center; margin-top: 40px; color: var(--text-muted); font-size: 0.9rem; }
-        footer a { color: var(--gold); text-decoration: none; }
+        footer { text-align: center; padding: 20px; color: var(--text-secondary); font-size: 0.85rem; }
+        footer a { color: var(--gold); }
         
-        .seo-content { margin-top: 60px; padding-top: 40px; border-top: 1px solid var(--border-color); }
-        .seo-content h2 { color: var(--gold); margin-bottom: 20px; font-size: 1.8rem; }
-        .seo-content h3 { color: var(--text-primary); margin: 25px 0 15px; font-size: 1.3rem; }
-        .seo-content p { color: var(--text-secondary); line-height: 1.7; margin-bottom: 15px; max-width: 800px; }
-        .seo-content ul { color: var(--text-secondary); margin-left: 20px; margin-bottom: 15px; line-height: 1.8; }
-        
-        /* Desktop: show metrics expanded */
-        @media (min-width: 769px) {
-            .collapsible-content { display: block !important; }
-            .collapsible-header .toggle-icon { display: none; }
-            .collapsible-header { cursor: default; }
-        }
-        
-        /* Mobile styles */
+        @media (min-width: 769px) { .metrics-content { display: block !important; } .metrics-header { cursor: default; } }
         @media (max-width: 768px) {
-            h1 { font-size: 1.8rem; }
-            .controls { flex-direction: column; }
-            .search-container { max-width: 100%; }
-            .controls input, .controls select, .controls button { width: 100%; }
-            .theme-toggle { position: static; margin-bottom: 15px; }
-            .stat-card .value { font-size: 1.4rem; }
-            .toggle-grid { grid-template-columns: repeat(2, 1fr); }
-            .rsi-indicator { flex-direction: column; text-align: center; }
-            .rsi-bar { width: 100%; }
+            .main-chart { height: 300px; }
+            .sub-chart { height: 100px; }
+            .stats-bar { gap: 15px; }
+            .stat-value { font-size: 1rem; }
         }
     </style>
 </head>
 <body data-theme="dark">
     <div class="container">
         <header>
-            <button class="theme-toggle" onclick="toggleTheme()"><span id="themeIcon">☀️</span></button>
-            <h1>📊 Stock vs Gold</h1>
-            <p class="subtitle">See stock prices measured in gold, not fiat currency</p>
+            <div class="logo">
+                <h1>📊 Stock vs Gold</h1>
+            </div>
+            <div class="header-controls">
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️</button>
+            </div>
         </header>
         
-        <div class="controls">
+        <div class="search-bar">
             <div class="search-container">
-                <input type="text" id="ticker" placeholder="Search stock (e.g., Apple, AAPL)" value="AAPL" autocomplete="off">
+                <input type="text" id="ticker" placeholder="Search stock (AAPL, TSLA...)" value="AAPL" autocomplete="off">
                 <div class="autocomplete-list" id="autocomplete"></div>
             </div>
             <select id="years">
-                <option value="1">1 Year</option>
-                <option value="5">5 Years</option>
-                <option value="10">10 Years</option>
-                <option value="20">20 Years</option>
+                <option value="1">1Y</option>
+                <option value="5">5Y</option>
+                <option value="10">10Y</option>
+                <option value="20">20Y</option>
             </select>
-            <button id="fetchBtn" onclick="fetchData()">Analyze</button>
+            <button onclick="fetchData()">Analyze</button>
         </div>
         
-        <div id="error" class="error" style="display: none;"></div>
-        <div id="suggestions" class="suggestions-box" style="display: none;">
-            <h4>Did you mean?</h4>
-            <div id="suggestionsList"></div>
-        </div>
+        <div id="error" class="error" style="display:none;"></div>
+        <div id="suggestions" class="suggestions-box" style="display:none;"><h4 style="color:var(--gold);margin-bottom:10px;">Did you mean?</h4><div id="suggestionsList"></div></div>
         
-        <div id="results" style="display: none;">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>💵 Price in USD</h3>
-                    <div class="value" id="usdPrice">-</div>
-                    <div class="change" id="usdChange">-</div>
+        <div id="results" style="display:none;">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-label">Price (USD)</span>
+                    <span class="stat-value" id="priceUsd">-</span>
+                    <span class="stat-change" id="changeUsd">-</span>
                 </div>
-                <div class="stat-card">
-                    <h3>🥇 Price in Gold (oz)</h3>
-                    <div class="value gold" id="goldPrice">-</div>
-                    <div class="change" id="goldChange">-</div>
+                <div class="stat-item">
+                    <span class="stat-label">Price (Gold oz)</span>
+                    <span class="stat-value gold-text" id="priceGold">-</span>
+                    <span class="stat-change" id="changeGold">-</span>
                 </div>
-                <div class="stat-card">
-                    <h3>📈 Real vs Nominal</h3>
-                    <div class="value" id="difference">-</div>
-                    <div class="change" id="diffExplain">-</div>
+                <div class="stat-item">
+                    <span class="stat-label">Real vs Nominal</span>
+                    <span class="stat-value" id="realVsNominal">-</span>
                 </div>
-            </div>
-            
-            <div class="toggle-section">
-                <h4>📉 Chart Options & Technical Analysis</h4>
-                <div class="toggle-grid">
-                    <label><input type="checkbox" id="showGold" checked onchange="updateChart()"> Gold Price (oz)</label>
-                    <label><input type="checkbox" id="showUsd" onchange="updateChart()"> USD Price</label>
-                    <label><input type="checkbox" id="showSMA20" onchange="updateChart()"> SMA 20</label>
-                    <label><input type="checkbox" id="showSMA50" onchange="updateChart()"> SMA 50</label>
-                    <label><input type="checkbox" id="showSMA200" onchange="updateChart()"> SMA 200</label>
-                    <label><input type="checkbox" id="showEMA" onchange="updateChart()"> EMA 12/26</label>
-                    <label><input type="checkbox" id="showBB" onchange="updateChart()"> Bollinger Bands</label>
+                <div class="stat-item">
+                    <span class="stat-label">RSI (14)</span>
+                    <span class="stat-value" id="rsiValue">-</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">MACD</span>
+                    <span class="stat-value" id="macdValue">-</span>
                 </div>
             </div>
             
-            <div class="chart-container">
-                <h3 class="chart-title" id="chartTitle">-</h3>
-                <canvas id="priceChart"></canvas>
+            <div class="chart-controls">
+                <div class="control-group">
+                    <button class="control-btn active" onclick="setChartType('line')" id="btnLine">Line</button>
+                    <button class="control-btn" onclick="setChartType('candle')" id="btnCandle">Candle</button>
+                </div>
+                <label><input type="checkbox" id="showGold" checked onchange="updateCharts()"><span>Gold</span></label>
+                <label><input type="checkbox" id="showUsd" onchange="updateCharts()"><span>USD</span></label>
+                <label><input type="checkbox" id="showSMA" onchange="updateCharts()"><span>SMA</span></label>
+                <label><input type="checkbox" id="showEMA" onchange="updateCharts()"><span>EMA</span></label>
+                <label><input type="checkbox" id="showBB" onchange="updateCharts()"><span>BB</span></label>
             </div>
             
-            <div class="rsi-indicator" id="rsiIndicator">
-                <div>
-                    <div class="rsi-label">RSI (14)</div>
-                    <div class="rsi-value" id="rsiValue">-</div>
+            <div class="charts-wrapper">
+                <div class="chart-title" id="chartTitle">-</div>
+                <div class="main-chart"><canvas id="mainChart"></canvas></div>
+                
+                <div class="sub-chart">
+                    <div class="sub-chart-label">Volume</div>
+                    <canvas id="volumeChart"></canvas>
                 </div>
-                <div class="rsi-bar">
-                    <div class="rsi-marker" id="rsiMarker" style="left: 50%;"></div>
+                
+                <div class="sub-chart">
+                    <div class="sub-chart-label">RSI (14) — Overbought: 70 | Oversold: 30</div>
+                    <canvas id="rsiChart"></canvas>
                 </div>
-                <div class="rsi-label" id="rsiSignal">-</div>
+                
+                <div class="sub-chart">
+                    <div class="sub-chart-label">MACD (12, 26, 9)</div>
+                    <canvas id="macdChart"></canvas>
+                </div>
             </div>
             
-            <!-- Market Cap - Always visible -->
-            <div class="highlight-box">
-                <h3>🏦 Market Capitalization</h3>
-                <div class="highlight-row"><span>In USD</span><span class="value" id="marketCapUsd">-</span></div>
-                <div class="highlight-row"><span>In Gold</span><span class="value gold" id="marketCapGold">-</span></div>
-                <div class="highlight-row"><span style="color: var(--text-secondary);">Current Gold Price</span><span id="currentGoldPrice">-</span></div>
-            </div>
-            
-            <!-- Collapsible on mobile -->
-            <div class="collapsible-section">
-                <div class="collapsible-header" onclick="toggleSection(this)">
-                    <h2>📊 Key Metrics</h2>
-                    <span class="toggle-icon">▼</span>
+            <div class="metrics-toggle">
+                <div class="metrics-header" onclick="toggleMetrics()">
+                    <h3>📊 Key Metrics & Financials</h3>
+                    <span id="metricsArrow">▼</span>
                 </div>
-                <div class="collapsible-content">
+                <div class="metrics-content" id="metricsContent">
                     <div class="metrics-grid">
-                        <div class="metric-card"><div class="label">P/E Ratio (TTM)</div><div class="value" id="peRatio">-</div></div>
-                        <div class="metric-card"><div class="label">Forward P/E</div><div class="value" id="forwardPe">-</div></div>
-                        <div class="metric-card"><div class="label">PEG Ratio</div><div class="value" id="pegRatio">-</div></div>
-                        <div class="metric-card"><div class="label">Price to Book</div><div class="value" id="priceToBook">-</div></div>
-                        <div class="metric-card"><div class="label">EPS (TTM)</div><div class="value" id="eps">-</div></div>
-                        <div class="metric-card"><div class="label">Dividend Yield</div><div class="value" id="dividendYield">-</div></div>
-                        <div class="metric-card"><div class="label">Profit Margin</div><div class="value" id="profitMargin">-</div></div>
-                        <div class="metric-card"><div class="label">Debt to Equity</div><div class="value" id="debtToEquity">-</div></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="collapsible-section">
-                <div class="collapsible-header" onclick="toggleSection(this)">
-                    <h2>🥇 Financials in Gold</h2>
-                    <span class="toggle-icon">▼</span>
-                </div>
-                <div class="collapsible-content">
-                    <div class="metrics-grid">
-                        <div class="metric-card"><div class="label">Revenue</div><div class="value" id="revenueUsd">-</div><div class="gold-value" id="revenueGold">-</div></div>
-                        <div class="metric-card"><div class="label">Free Cash Flow</div><div class="value" id="fcfUsd">-</div><div class="gold-value" id="fcfGold">-</div></div>
-                        <div class="metric-card"><div class="label">52 Week High</div><div class="value" id="high52w">-</div></div>
-                        <div class="metric-card"><div class="label">52 Week Low</div><div class="value" id="low52w">-</div></div>
+                        <div class="metric-card"><div class="metric-label">Market Cap</div><div class="metric-value" id="marketCap">-</div><div class="metric-gold" id="marketCapGold">-</div></div>
+                        <div class="metric-card"><div class="metric-label">P/E Ratio</div><div class="metric-value" id="pe">-</div></div>
+                        <div class="metric-card"><div class="metric-label">Forward P/E</div><div class="metric-value" id="forwardPe">-</div></div>
+                        <div class="metric-card"><div class="metric-label">PEG Ratio</div><div class="metric-value" id="peg">-</div></div>
+                        <div class="metric-card"><div class="metric-label">EPS</div><div class="metric-value" id="eps">-</div></div>
+                        <div class="metric-card"><div class="metric-label">Dividend</div><div class="metric-value" id="dividend">-</div></div>
+                        <div class="metric-card"><div class="metric-label">Revenue</div><div class="metric-value" id="revenue">-</div><div class="metric-gold" id="revenueGold">-</div></div>
+                        <div class="metric-card"><div class="metric-label">Profit Margin</div><div class="metric-value" id="margin">-</div></div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <div id="loading" class="loading" style="display: none;">Loading data...</div>
+        <div id="loading" class="loading" style="display:none;">Loading...</div>
         
-        <section class="seo-content">
-            <h2>Why Measure Stock Prices in Gold?</h2>
-            <p>When you look at stock prices in dollars, you're seeing a distorted picture. The US dollar has lost over 95% of its purchasing power since 1913. Gold has maintained its purchasing power for thousands of years.</p>
-            <h3>Technical Analysis in Gold Terms</h3>
-            <p>Our tool provides technical indicators calculated on gold-denominated prices, giving you a unique perspective on real momentum and trends.</p>
-        </section>
-        
-        <footer>
-            <p>Data from Yahoo Finance • Gold = Gold Futures (GC=F)</p>
-            <p>Built with ⚡ | <a href="https://github.com/robapuros/stock-vs-gold">GitHub</a></p>
-        </footer>
+        <footer>Data: Yahoo Finance | Gold: GC=F | <a href="https://github.com/robapuros/stock-vs-gold">GitHub</a></footer>
     </div>
     
     <script>
-        let chartInstance = null;
+        let mainChart, volumeChart, rsiChart, macdChart;
         let currentData = null;
-        let searchTimeout = null;
-        
-        // Detect mobile and set defaults
+        let chartType = 'line';
+        let searchTimeout;
         const isMobile = window.innerWidth <= 768;
         
         function toggleTheme() {
             const body = document.body;
-            const icon = document.getElementById('themeIcon');
             body.dataset.theme = body.dataset.theme === 'dark' ? 'light' : 'dark';
-            icon.textContent = body.dataset.theme === 'dark' ? '☀️' : '🌙';
+            document.getElementById('themeBtn').textContent = body.dataset.theme === 'dark' ? '☀️' : '🌙';
             localStorage.setItem('theme', body.dataset.theme);
-            if (chartInstance) updateChart();
+            if (currentData) updateCharts();
         }
         
-        function toggleSection(header) {
+        function toggleMetrics() {
             if (window.innerWidth > 768) return;
-            header.classList.toggle('open');
-            header.nextElementSibling.classList.toggle('open');
+            document.getElementById('metricsContent').classList.toggle('open');
+            document.getElementById('metricsArrow').textContent = document.getElementById('metricsContent').classList.contains('open') ? '▲' : '▼';
         }
         
-        function loadTheme() {
-            const saved = localStorage.getItem('theme');
-            if (saved === 'light') {
-                document.body.dataset.theme = 'light';
-                document.getElementById('themeIcon').textContent = '🌙';
-            }
+        function setChartType(type) {
+            chartType = type;
+            document.getElementById('btnLine').classList.toggle('active', type === 'line');
+            document.getElementById('btnCandle').classList.toggle('active', type === 'candle');
+            if (currentData) updateCharts();
         }
         
         // Autocomplete
@@ -387,250 +257,241 @@
         
         tickerInput.addEventListener('input', function() {
             clearTimeout(searchTimeout);
-            const query = this.value.trim();
-            if (query.length < 1) {
-                autocompleteList.style.display = 'none';
-                return;
-            }
-            searchTimeout = setTimeout(() => searchTickers(query), 300);
+            if (this.value.length < 1) { autocompleteList.style.display = 'none'; return; }
+            searchTimeout = setTimeout(() => searchTickers(this.value), 300);
         });
         
-        tickerInput.addEventListener('focus', function() {
-            if (this.value.trim().length >= 1) {
-                searchTickers(this.value.trim());
-            }
+        document.addEventListener('click', e => {
+            if (!tickerInput.contains(e.target)) autocompleteList.style.display = 'none';
         });
         
-        document.addEventListener('click', function(e) {
-            if (!tickerInput.contains(e.target) && !autocompleteList.contains(e.target)) {
-                autocompleteList.style.display = 'none';
-            }
-        });
-        
-        async function searchTickers(query) {
+        async function searchTickers(q) {
             try {
-                const resp = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-                const data = await resp.json();
-                if (data.results && data.results.length > 0) {
-                    autocompleteList.innerHTML = data.results.map(r => `
-                        <div class="autocomplete-item" onclick="selectTicker('${r.symbol}')">
-                            <span class="autocomplete-symbol">${r.symbol}</span>
-                            <span class="autocomplete-name">${r.name}</span>
-                            <span class="autocomplete-exchange">${r.exchange}</span>
-                        </div>
-                    `).join('');
+                const r = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+                const d = await r.json();
+                if (d.results?.length) {
+                    autocompleteList.innerHTML = d.results.map(r => `<div class="autocomplete-item" onclick="selectTicker('${r.symbol}')"><span class="autocomplete-symbol">${r.symbol}</span><span class="autocomplete-name">${r.name}</span></div>`).join('');
                     autocompleteList.style.display = 'block';
-                } else {
-                    autocompleteList.style.display = 'none';
-                }
-            } catch (e) {
-                autocompleteList.style.display = 'none';
-            }
+                } else autocompleteList.style.display = 'none';
+            } catch(e) { autocompleteList.style.display = 'none'; }
         }
         
-        function selectTicker(symbol) {
-            tickerInput.value = symbol;
-            autocompleteList.style.display = 'none';
-            fetchData();
+        function selectTicker(s) { tickerInput.value = s; autocompleteList.style.display = 'none'; fetchData(); }
+        
+        function fmt(n) {
+            if (n == null) return '-';
+            if (n >= 1e12) return (n/1e12).toFixed(2)+'T';
+            if (n >= 1e9) return (n/1e9).toFixed(2)+'B';
+            if (n >= 1e6) return (n/1e6).toFixed(2)+'M';
+            return n.toLocaleString();
         }
         
-        function formatNumber(num) {
-            if (num === null || num === undefined) return '-';
-            if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
-            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
-            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
-            return num.toLocaleString();
-        }
-        
-        function formatGoldOz(num) {
-            if (num === null || num === undefined) return '-';
-            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B oz';
-            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M oz';
-            return num.toFixed(2) + ' oz';
-        }
+        function fmtGold(n) { return n == null ? '-' : (n >= 1e6 ? (n/1e6).toFixed(2)+'M oz' : n.toFixed(4)+' oz'); }
         
         async function fetchData() {
             const ticker = tickerInput.value.trim().toUpperCase();
             const years = document.getElementById('years').value;
-            
-            if (!ticker) { showError('Please enter a ticker symbol'); return; }
+            if (!ticker) return;
             
             const url = new URL(window.location);
             url.searchParams.set('ticker', ticker);
             url.searchParams.set('years', years);
             window.history.replaceState({}, '', url);
             
-            document.getElementById('fetchBtn').disabled = true;
             document.getElementById('loading').style.display = 'block';
             document.getElementById('results').style.display = 'none';
             document.getElementById('error').style.display = 'none';
             document.getElementById('suggestions').style.display = 'none';
             
             try {
-                const response = await fetch(`/api/data?ticker=${encodeURIComponent(ticker)}&years=${years}`);
-                const data = await response.json();
-                
+                const r = await fetch(`/api/data?ticker=${encodeURIComponent(ticker)}&years=${years}`);
+                const data = await r.json();
                 if (data.error) {
-                    showError(data.error);
-                    if (data.suggestions && data.suggestions.length > 0) {
-                        showSuggestions(data.suggestions);
+                    document.getElementById('error').textContent = data.error;
+                    document.getElementById('error').style.display = 'block';
+                    if (data.suggestions?.length) {
+                        document.getElementById('suggestionsList').innerHTML = data.suggestions.map(s => `<span class="suggestion-item" onclick="selectTicker('${s.symbol}')">${s.symbol}</span>`).join('');
+                        document.getElementById('suggestions').style.display = 'block';
                     }
                     return;
                 }
-                
                 currentData = data;
-                displayResults(data);
-                document.title = `${data.ticker} Stock Price in Gold | Stock vs Gold`;
-                
-            } catch (err) {
-                showError('Failed to fetch data. Please try again.');
+                displayData(data);
+            } catch(e) {
+                document.getElementById('error').textContent = 'Failed to load data';
+                document.getElementById('error').style.display = 'block';
             } finally {
-                document.getElementById('fetchBtn').disabled = false;
                 document.getElementById('loading').style.display = 'none';
             }
         }
         
-        function showError(msg) {
-            document.getElementById('error').textContent = msg;
-            document.getElementById('error').style.display = 'block';
-        }
-        
-        function showSuggestions(suggestions) {
-            const list = document.getElementById('suggestionsList');
-            list.innerHTML = suggestions.map(s => 
-                `<span class="suggestion-item" onclick="selectTicker('${s.symbol}')">${s.symbol} - ${s.name}</span>`
-            ).join('');
-            document.getElementById('suggestions').style.display = 'block';
-        }
-        
-        function displayResults(data) {
-            const stats = data.stats;
-            const metrics = data.metrics;
-            const tech = data.technical;
+        function displayData(d) {
+            const s = d.stats, m = d.metrics, t = d.technical;
             
-            document.getElementById('usdPrice').textContent = `$${stats.end_price_usd.toLocaleString()}`;
-            const usdChangeEl = document.getElementById('usdChange');
-            usdChangeEl.textContent = `${stats.change_usd_pct >= 0 ? '+' : ''}${stats.change_usd_pct}%`;
-            usdChangeEl.className = 'change ' + (stats.change_usd_pct >= 0 ? 'positive' : 'negative');
+            document.getElementById('priceUsd').textContent = '$' + s.end_price_usd;
+            document.getElementById('changeUsd').textContent = (s.change_usd_pct >= 0 ? '+' : '') + s.change_usd_pct + '%';
+            document.getElementById('changeUsd').className = 'stat-change ' + (s.change_usd_pct >= 0 ? 'positive' : 'negative');
             
-            document.getElementById('goldPrice').textContent = `${stats.end_price_gold.toFixed(4)} oz`;
-            const goldChangeEl = document.getElementById('goldChange');
-            goldChangeEl.textContent = `${stats.change_gold_pct >= 0 ? '+' : ''}${stats.change_gold_pct}%`;
-            goldChangeEl.className = 'change ' + (stats.change_gold_pct >= 0 ? 'positive' : 'negative');
+            document.getElementById('priceGold').textContent = s.end_price_gold.toFixed(4) + ' oz';
+            document.getElementById('changeGold').textContent = (s.change_gold_pct >= 0 ? '+' : '') + s.change_gold_pct + '%';
+            document.getElementById('changeGold').className = 'stat-change ' + (s.change_gold_pct >= 0 ? 'positive' : 'negative');
             
-            const diff = stats.change_usd_pct - stats.change_gold_pct;
-            document.getElementById('difference').textContent = `${diff >= 0 ? '+' : ''}${diff.toFixed(1)}%`;
-            document.getElementById('difference').className = 'value ' + (diff >= 0 ? 'positive' : 'negative');
-            document.getElementById('diffExplain').textContent = diff > 0 ? 'USD overstated' : 'Lost real value';
+            const diff = s.change_usd_pct - s.change_gold_pct;
+            document.getElementById('realVsNominal').textContent = (diff >= 0 ? '+' : '') + diff.toFixed(1) + '%';
+            document.getElementById('realVsNominal').className = 'stat-value ' + (diff >= 0 ? 'positive' : 'negative');
             
-            // RSI
-            const rsi = tech.current_rsi;
-            document.getElementById('rsiValue').textContent = rsi ? rsi.toFixed(1) : '-';
-            if (rsi) {
-                document.getElementById('rsiMarker').style.left = `${rsi}%`;
-                let signal = 'Neutral', color = 'var(--text-secondary)';
-                if (rsi > 70) { signal = 'Overbought'; color = 'var(--negative)'; }
-                else if (rsi < 30) { signal = 'Oversold'; color = 'var(--positive)'; }
-                document.getElementById('rsiSignal').textContent = signal;
-                document.getElementById('rsiSignal').style.color = color;
-                document.getElementById('rsiValue').style.color = color;
-            }
+            document.getElementById('rsiValue').textContent = t.current_rsi?.toFixed(1) || '-';
+            document.getElementById('rsiValue').className = 'stat-value ' + (t.current_rsi > 70 ? 'negative' : t.current_rsi < 30 ? 'positive' : '');
             
-            document.getElementById('marketCapUsd').textContent = metrics.market_cap_usd ? '$' + formatNumber(metrics.market_cap_usd) : '-';
-            document.getElementById('marketCapGold').textContent = metrics.market_cap_gold ? formatGoldOz(metrics.market_cap_gold) : '-';
-            document.getElementById('currentGoldPrice').textContent = metrics.current_gold_price ? '$' + metrics.current_gold_price.toLocaleString() + '/oz' : '-';
+            const macdDiff = t.current_macd && t.current_macd_signal ? t.current_macd - t.current_macd_signal : null;
+            document.getElementById('macdValue').textContent = macdDiff?.toFixed(6) || '-';
+            document.getElementById('macdValue').className = 'stat-value ' + (macdDiff > 0 ? 'positive' : macdDiff < 0 ? 'negative' : '');
             
-            document.getElementById('peRatio').textContent = metrics.pe_ratio ?? '-';
-            document.getElementById('forwardPe').textContent = metrics.forward_pe ?? '-';
-            document.getElementById('pegRatio').textContent = metrics.peg_ratio ?? '-';
-            document.getElementById('priceToBook').textContent = metrics.price_to_book ?? '-';
-            document.getElementById('eps').textContent = metrics.eps ? '$' + metrics.eps : '-';
-            document.getElementById('dividendYield').textContent = metrics.dividend_yield ? metrics.dividend_yield + '%' : '-';
-            document.getElementById('profitMargin').textContent = metrics.profit_margin ? metrics.profit_margin + '%' : '-';
-            document.getElementById('debtToEquity').textContent = metrics.debt_to_equity ?? '-';
+            document.getElementById('marketCap').textContent = m.market_cap_usd ? '$' + fmt(m.market_cap_usd) : '-';
+            document.getElementById('marketCapGold').textContent = m.market_cap_gold ? fmtGold(m.market_cap_gold) : '';
+            document.getElementById('pe').textContent = m.pe_ratio ?? '-';
+            document.getElementById('forwardPe').textContent = m.forward_pe ?? '-';
+            document.getElementById('peg').textContent = m.peg_ratio ?? '-';
+            document.getElementById('eps').textContent = m.eps ? '$' + m.eps : '-';
+            document.getElementById('dividend').textContent = m.dividend_yield ? m.dividend_yield + '%' : '-';
+            document.getElementById('revenue').textContent = m.revenue_usd ? '$' + fmt(m.revenue_usd) : '-';
+            document.getElementById('revenueGold').textContent = m.revenue_gold ? fmtGold(m.revenue_gold) : '';
+            document.getElementById('margin').textContent = m.profit_margin ? m.profit_margin + '%' : '-';
             
-            document.getElementById('revenueUsd').textContent = metrics.revenue_usd ? '$' + formatNumber(metrics.revenue_usd) : '-';
-            document.getElementById('revenueGold').textContent = metrics.revenue_gold ? '🥇 ' + formatGoldOz(metrics.revenue_gold) : '-';
-            document.getElementById('fcfUsd').textContent = metrics.free_cash_flow_usd ? '$' + formatNumber(metrics.free_cash_flow_usd) : '-';
-            document.getElementById('fcfGold').textContent = metrics.free_cash_flow_gold ? '🥇 ' + formatGoldOz(metrics.free_cash_flow_gold) : '-';
-            document.getElementById('high52w').textContent = metrics['52w_high'] ? '$' + metrics['52w_high'].toLocaleString() : '-';
-            document.getElementById('low52w').textContent = metrics['52w_low'] ? '$' + metrics['52w_low'].toLocaleString() : '-';
-            
-            document.getElementById('chartTitle').textContent = `${data.company_name} (${data.ticker}) - Price History`;
+            document.getElementById('chartTitle').textContent = `${d.company_name} (${d.ticker})`;
             document.getElementById('results').style.display = 'block';
-            updateChart();
+            document.title = `${d.ticker} vs Gold | Stock vs Gold`;
+            
+            updateCharts();
         }
         
-        function updateChart() {
+        function getColors() {
+            const dark = document.body.dataset.theme === 'dark';
+            return {
+                text: dark ? '#8b949e' : '#57606a',
+                grid: dark ? '#30363d' : '#d0d7de',
+                gold: '#f0b90b',
+                green: '#26a69a',
+                red: '#ef5350',
+                blue: '#2196f3',
+                purple: '#9c27b0',
+                orange: '#ff9800'
+            };
+        }
+        
+        function updateCharts() {
             if (!currentData) return;
+            const c = getColors();
+            const d = currentData;
+            const t = d.technical;
             
-            const isDark = document.body.dataset.theme === 'dark';
-            const textColor = isDark ? '#888' : '#555';
-            const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-            const goldColor = isDark ? '#ffd700' : '#c9a000';
-            const greenColor = isDark ? '#4ade80' : '#16a34a';
+            // Destroy existing charts
+            [mainChart, volumeChart, rsiChart, macdChart].forEach(ch => ch?.destroy());
             
-            const datasets = [];
-            const tech = currentData.technical;
-            
+            // Main Chart
+            const mainDatasets = [];
             if (document.getElementById('showGold').checked) {
-                datasets.push({ label: 'Price in Gold (oz)', data: currentData.stock_in_gold, borderColor: goldColor, borderWidth: 2, tension: 0.1, yAxisID: 'y', pointRadius: 0 });
+                mainDatasets.push({ label: 'Gold (oz)', data: d.stock_in_gold, borderColor: c.gold, borderWidth: 2, pointRadius: 0, yAxisID: 'y' });
             }
             if (document.getElementById('showUsd').checked) {
-                datasets.push({ label: 'Price in USD', data: currentData.stock_usd, borderColor: greenColor, borderWidth: 2, tension: 0.1, yAxisID: 'y1', pointRadius: 0 });
+                mainDatasets.push({ label: 'USD', data: d.stock_usd, borderColor: c.green, borderWidth: 2, pointRadius: 0, yAxisID: 'y1' });
             }
-            if (document.getElementById('showSMA20').checked && tech.sma_20) {
-                datasets.push({ label: 'SMA 20', data: tech.sma_20, borderColor: '#ff6b6b', borderWidth: 1.5, borderDash: [5, 5], pointRadius: 0, yAxisID: 'y' });
+            if (document.getElementById('showSMA').checked) {
+                if (t.sma_20) mainDatasets.push({ label: 'SMA20', data: t.sma_20, borderColor: c.red, borderWidth: 1, pointRadius: 0, borderDash: [5,5], yAxisID: 'y' });
+                if (t.sma_50) mainDatasets.push({ label: 'SMA50', data: t.sma_50, borderColor: c.blue, borderWidth: 1, pointRadius: 0, borderDash: [5,5], yAxisID: 'y' });
             }
-            if (document.getElementById('showSMA50').checked && tech.sma_50) {
-                datasets.push({ label: 'SMA 50', data: tech.sma_50, borderColor: '#4ecdc4', borderWidth: 1.5, borderDash: [5, 5], pointRadius: 0, yAxisID: 'y' });
+            if (document.getElementById('showEMA').checked) {
+                if (t.ema_12) mainDatasets.push({ label: 'EMA12', data: t.ema_12, borderColor: c.orange, borderWidth: 1, pointRadius: 0, yAxisID: 'y' });
+                if (t.ema_26) mainDatasets.push({ label: 'EMA26', data: t.ema_26, borderColor: c.purple, borderWidth: 1, pointRadius: 0, yAxisID: 'y' });
             }
-            if (document.getElementById('showSMA200').checked && tech.sma_200) {
-                datasets.push({ label: 'SMA 200', data: tech.sma_200, borderColor: '#a855f7', borderWidth: 1.5, borderDash: [5, 5], pointRadius: 0, yAxisID: 'y' });
-            }
-            if (document.getElementById('showEMA').checked && tech.ema_12) {
-                datasets.push({ label: 'EMA 12', data: tech.ema_12, borderColor: '#f97316', borderWidth: 1, pointRadius: 0, yAxisID: 'y' });
-                datasets.push({ label: 'EMA 26', data: tech.ema_26, borderColor: '#06b6d4', borderWidth: 1, pointRadius: 0, yAxisID: 'y' });
-            }
-            if (document.getElementById('showBB').checked && tech.bb_upper) {
-                datasets.push({ label: 'BB Upper', data: tech.bb_upper, borderColor: 'rgba(168, 85, 247, 0.5)', borderWidth: 1, pointRadius: 0, yAxisID: 'y' });
-                datasets.push({ label: 'BB Lower', data: tech.bb_lower, borderColor: 'rgba(168, 85, 247, 0.5)', borderWidth: 1, pointRadius: 0, fill: '-1', backgroundColor: 'rgba(168, 85, 247, 0.1)', yAxisID: 'y' });
+            if (document.getElementById('showBB').checked && t.bb_upper) {
+                mainDatasets.push({ label: 'BB+', data: t.bb_upper, borderColor: 'rgba(156,39,176,0.5)', borderWidth: 1, pointRadius: 0, fill: false, yAxisID: 'y' });
+                mainDatasets.push({ label: 'BB-', data: t.bb_lower, borderColor: 'rgba(156,39,176,0.5)', borderWidth: 1, pointRadius: 0, fill: '-1', backgroundColor: 'rgba(156,39,176,0.1)', yAxisID: 'y' });
             }
             
-            const ctx = document.getElementById('priceChart').getContext('2d');
-            if (chartInstance) chartInstance.destroy();
-            
-            chartInstance = new Chart(ctx, {
+            mainChart = new Chart(document.getElementById('mainChart'), {
                 type: 'line',
-                data: { labels: currentData.dates, datasets },
+                data: { labels: d.dates, datasets: mainDatasets },
                 options: {
-                    responsive: true,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: { legend: { labels: { color: textColor } } },
+                    responsive: true, maintainAspectRatio: false,
+                    interaction: { intersect: false, mode: 'index' },
+                    plugins: { legend: { display: true, labels: { color: c.text, boxWidth: 12 } } },
                     scales: {
-                        x: { ticks: { color: textColor, maxTicksLimit: isMobile ? 5 : 10 }, grid: { color: gridColor } },
-                        y: { position: 'left', title: { display: true, text: 'Gold (oz)', color: goldColor }, ticks: { color: goldColor }, grid: { color: gridColor } },
-                        y1: { display: document.getElementById('showUsd').checked, position: 'right', title: { display: true, text: 'USD', color: greenColor }, ticks: { color: greenColor }, grid: { drawOnChartArea: false } }
+                        x: { ticks: { color: c.text, maxTicksLimit: isMobile ? 5 : 10 }, grid: { color: c.grid } },
+                        y: { position: 'left', ticks: { color: c.gold }, grid: { color: c.grid } },
+                        y1: { position: 'right', display: document.getElementById('showUsd').checked, ticks: { color: c.green }, grid: { drawOnChartArea: false } }
+                    }
+                }
+            });
+            
+            // Volume Chart
+            const volColors = d.stock_in_gold.map((v, i) => i > 0 && v >= d.stock_in_gold[i-1] ? c.green : c.red);
+            volumeChart = new Chart(document.getElementById('volumeChart'), {
+                type: 'bar',
+                data: { labels: d.dates, datasets: [{ data: d.volume, backgroundColor: volColors, borderWidth: 0 }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { ticks: { color: c.text, callback: v => fmt(v) }, grid: { color: c.grid } }
+                    }
+                }
+            });
+            
+            // RSI Chart
+            rsiChart = new Chart(document.getElementById('rsiChart'), {
+                type: 'line',
+                data: {
+                    labels: d.dates,
+                    datasets: [
+                        { data: t.rsi, borderColor: c.purple, borderWidth: 1.5, pointRadius: 0, fill: false },
+                        { data: Array(d.dates.length).fill(70), borderColor: c.red, borderWidth: 1, borderDash: [3,3], pointRadius: 0 },
+                        { data: Array(d.dates.length).fill(30), borderColor: c.green, borderWidth: 1, borderDash: [3,3], pointRadius: 0 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { min: 0, max: 100, ticks: { color: c.text, stepSize: 50 }, grid: { color: c.grid } }
+                    }
+                }
+            });
+            
+            // MACD Chart
+            const histColors = t.macd_histogram.map(v => v >= 0 ? c.green : c.red);
+            macdChart = new Chart(document.getElementById('macdChart'), {
+                type: 'bar',
+                data: {
+                    labels: d.dates,
+                    datasets: [
+                        { type: 'bar', data: t.macd_histogram, backgroundColor: histColors, borderWidth: 0 },
+                        { type: 'line', data: t.macd, borderColor: c.blue, borderWidth: 1.5, pointRadius: 0 },
+                        { type: 'line', data: t.macd_signal, borderColor: c.orange, borderWidth: 1.5, pointRadius: 0 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { ticks: { color: c.text }, grid: { color: c.grid } }
                     }
                 }
             });
         }
         
-        tickerInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { autocompleteList.style.display = 'none'; fetchData(); } });
+        tickerInput.addEventListener('keypress', e => { if (e.key === 'Enter') { autocompleteList.style.display = 'none'; fetchData(); } });
         
-        function loadFromUrl() {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('ticker')) tickerInput.value = params.get('ticker');
-            if (params.get('years')) document.getElementById('years').value = params.get('years');
-        }
-        
-        window.onload = function() {
-            loadTheme();
-            loadFromUrl();
-            // Mobile: default 1 year if no URL param
-            if (isMobile && !new URLSearchParams(window.location.search).get('years')) {
-                document.getElementById('years').value = '1';
-            }
+        window.onload = () => {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'light') { document.body.dataset.theme = 'light'; document.getElementById('themeBtn').textContent = '🌙'; }
+            const p = new URLSearchParams(window.location.search);
+            if (p.get('ticker')) tickerInput.value = p.get('ticker');
+            if (p.get('years')) document.getElementById('years').value = p.get('years');
+            else if (isMobile) document.getElementById('years').value = '1';
             fetchData();
         };
     </script>
