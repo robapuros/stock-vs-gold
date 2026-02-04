@@ -21,7 +21,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         
@@ -121,9 +121,59 @@
             margin-top: 5px;
         }
         
+        .stat-card .sub {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 5px;
+        }
+        
         .positive { color: #4ade80; }
         .negative { color: #f87171; }
         .gold { color: #ffd700; }
+        
+        .metrics-section {
+            margin-bottom: 30px;
+        }
+        
+        .metrics-section h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .metric-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .metric-card .label {
+            color: #888;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        
+        .metric-card .value {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        
+        .metric-card .gold-value {
+            color: #ffd700;
+            font-size: 0.95rem;
+            margin-top: 3px;
+        }
         
         .chart-container {
             background: rgba(255, 255, 255, 0.05);
@@ -186,6 +236,31 @@
             text-decoration: none;
         }
         
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 179, 71, 0.1));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .highlight-box h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+        
+        .highlight-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .highlight-row:last-child {
+            border-bottom: none;
+        }
+        
         @media (max-width: 600px) {
             h1 { font-size: 1.8rem; }
             .controls { flex-direction: column; }
@@ -234,6 +309,87 @@
                 </div>
             </div>
             
+            <!-- Market Cap in Gold Highlight -->
+            <div class="highlight-box" id="marketCapBox">
+                <h3>🏦 Market Cap</h3>
+                <div class="highlight-row">
+                    <span>In USD</span>
+                    <span class="value" id="marketCapUsd">-</span>
+                </div>
+                <div class="highlight-row">
+                    <span>In Gold</span>
+                    <span class="value gold" id="marketCapGold">-</span>
+                </div>
+                <div class="highlight-row">
+                    <span style="color: #888;">Current Gold Price</span>
+                    <span id="currentGoldPrice">-</span>
+                </div>
+            </div>
+            
+            <!-- Key Metrics Section -->
+            <div class="metrics-section">
+                <h2>📊 Key Metrics</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="label">P/E Ratio (TTM)</div>
+                        <div class="value" id="peRatio">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="label">Forward P/E</div>
+                        <div class="value" id="forwardPe">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="label">PEG Ratio</div>
+                        <div class="value" id="pegRatio">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="label">Price to Book</div>
+                        <div class="value" id="priceToBook">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="label">EPS (TTM)</div>
+                        <div class="value" id="eps">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="label">Dividend Yield</div>
+                        <div class="value" id="dividendYield">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="label">Profit Margin</div>
+                        <div class="value" id="profitMargin">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="label">Debt to Equity</div>
+                        <div class="value" id="debtToEquity">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Financials in Gold Section -->
+            <div class="metrics-section">
+                <h2>🥇 Financials in Gold</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="label">Revenue</div>
+                        <div class="value" id="revenueUsd">-</div>
+                        <div class="gold-value" id="revenueGold">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="label">Free Cash Flow</div>
+                        <div class="value" id="fcfUsd">-</div>
+                        <div class="gold-value" id="fcfGold">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="label">52 Week High</div>
+                        <div class="value" id="high52w">-</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="label">52 Week Low</div>
+                        <div class="value" id="low52w">-</div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="toggle-container">
                 <label>
                     <input type="checkbox" id="showGold" checked onchange="updateChart()">
@@ -264,6 +420,23 @@
     <script>
         let chartInstance = null;
         let currentData = null;
+        
+        function formatNumber(num) {
+            if (num === null || num === undefined) return '-';
+            if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+            if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K';
+            return num.toLocaleString();
+        }
+        
+        function formatGoldOz(num) {
+            if (num === null || num === undefined) return '-';
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B oz';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M oz';
+            if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K oz';
+            return num.toFixed(2) + ' oz';
+        }
         
         async function fetchData() {
             const ticker = document.getElementById('ticker').value.trim().toUpperCase();
@@ -307,6 +480,7 @@
         
         function displayResults(data) {
             const stats = data.stats;
+            const metrics = data.metrics;
             
             // USD stats
             document.getElementById('usdPrice').textContent = `$${stats.end_price_usd.toLocaleString()}`;
@@ -334,6 +508,29 @@
             } else {
                 explainEl.textContent = 'Same performance in both';
             }
+            
+            // Market Cap
+            document.getElementById('marketCapUsd').textContent = metrics.market_cap_usd ? '$' + formatNumber(metrics.market_cap_usd) : '-';
+            document.getElementById('marketCapGold').textContent = metrics.market_cap_gold ? formatGoldOz(metrics.market_cap_gold) : '-';
+            document.getElementById('currentGoldPrice').textContent = metrics.current_gold_price ? '$' + metrics.current_gold_price.toLocaleString() + '/oz' : '-';
+            
+            // Key Metrics
+            document.getElementById('peRatio').textContent = metrics.pe_ratio ?? '-';
+            document.getElementById('forwardPe').textContent = metrics.forward_pe ?? '-';
+            document.getElementById('pegRatio').textContent = metrics.peg_ratio ?? '-';
+            document.getElementById('priceToBook').textContent = metrics.price_to_book ?? '-';
+            document.getElementById('eps').textContent = metrics.eps ? '$' + metrics.eps : '-';
+            document.getElementById('dividendYield').textContent = metrics.dividend_yield ? metrics.dividend_yield + '%' : '-';
+            document.getElementById('profitMargin').textContent = metrics.profit_margin ? metrics.profit_margin + '%' : '-';
+            document.getElementById('debtToEquity').textContent = metrics.debt_to_equity ?? '-';
+            
+            // Financials in Gold
+            document.getElementById('revenueUsd').textContent = metrics.revenue_usd ? '$' + formatNumber(metrics.revenue_usd) : '-';
+            document.getElementById('revenueGold').textContent = metrics.revenue_gold ? '🥇 ' + formatGoldOz(metrics.revenue_gold) : '-';
+            document.getElementById('fcfUsd').textContent = metrics.free_cash_flow_usd ? '$' + formatNumber(metrics.free_cash_flow_usd) : '-';
+            document.getElementById('fcfGold').textContent = metrics.free_cash_flow_gold ? '🥇 ' + formatGoldOz(metrics.free_cash_flow_gold) : '-';
+            document.getElementById('high52w').textContent = metrics['52w_high'] ? '$' + metrics['52w_high'].toLocaleString() : '-';
+            document.getElementById('low52w').textContent = metrics['52w_low'] ? '$' + metrics['52w_low'].toLocaleString() : '-';
             
             document.getElementById('chartTitle').textContent = 
                 `${data.company_name} (${data.ticker}) - Price History`;
