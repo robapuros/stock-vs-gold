@@ -12,7 +12,6 @@ import numpy as np
 GOLD_TICKER = "GC=F"
 
 def calculate_sma(data, period):
-    """Calculate Simple Moving Average."""
     if len(data) < period:
         return [None] * len(data)
     sma = []
@@ -24,7 +23,6 @@ def calculate_sma(data, period):
     return sma
 
 def calculate_ema(data, period):
-    """Calculate Exponential Moving Average."""
     if len(data) < period:
         return [None] * len(data)
     ema = [None] * (period - 1)
@@ -37,13 +35,11 @@ def calculate_ema(data, period):
     return ema
 
 def calculate_rsi(data, period=14):
-    """Calculate Relative Strength Index."""
     if len(data) < period + 1:
         return [None] * len(data)
     
     rsi = [None] * period
-    gains = []
-    losses = []
+    gains, losses = [], []
     
     for i in range(1, len(data)):
         change = data[i] - data[i-1]
@@ -62,7 +58,6 @@ def calculate_rsi(data, period=14):
     for i in range(period, len(gains)):
         avg_gain = (avg_gain * (period - 1) + gains[i]) / period
         avg_loss = (avg_loss * (period - 1) + losses[i]) / period
-        
         if avg_loss == 0:
             rsi.append(100)
         else:
@@ -72,7 +67,6 @@ def calculate_rsi(data, period=14):
     return rsi
 
 def calculate_macd(data, fast=12, slow=26, signal=9):
-    """Calculate MACD, Signal line, and Histogram."""
     if len(data) < slow:
         return [None] * len(data), [None] * len(data), [None] * len(data)
     
@@ -104,13 +98,11 @@ def calculate_macd(data, fast=12, slow=26, signal=9):
     return macd_line, signal_line, histogram
 
 def calculate_bollinger(data, period=20, std_dev=2):
-    """Calculate Bollinger Bands."""
     if len(data) < period:
         return [None] * len(data), [None] * len(data), [None] * len(data)
     
     sma = calculate_sma(data, period)
-    upper = []
-    lower = []
+    upper, lower = [], []
     
     for i in range(len(data)):
         if i < period - 1:
@@ -124,8 +116,25 @@ def calculate_bollinger(data, period=20, std_dev=2):
     
     return sma, upper, lower
 
+def calculate_stochastic(high, low, close, k_period=14, d_period=3):
+    if len(close) < k_period:
+        return [None] * len(close), [None] * len(close)
+    
+    k_values = [None] * (k_period - 1)
+    
+    for i in range(k_period - 1, len(close)):
+        highest_high = max(high[i-k_period+1:i+1])
+        lowest_low = min(low[i-k_period+1:i+1])
+        if highest_high - lowest_low == 0:
+            k_values.append(50)
+        else:
+            k = ((close[i] - lowest_low) / (highest_high - lowest_low)) * 100
+            k_values.append(round(k, 2))
+    
+    d_values = calculate_sma(k_values, d_period)
+    return k_values, d_values
+
 def search_tickers(query):
-    """Search for tickers using Yahoo Finance."""
     try:
         url = f"https://query2.finance.yahoo.com/v1/finance/search?q={quote(query)}&quotesCount=10&newsCount=0"
         req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -142,26 +151,14 @@ def search_tickers(query):
                         'type': q.get('quoteType', '')
                     })
             return results
-    except Exception as e:
+    except:
         return []
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed = urlparse(self.path)
-        path = parsed.path
         params = parse_qs(parsed.query)
         
-        # Search endpoint
-        if path == '/api/search':
-            query = params.get('q', [''])[0]
-            if len(query) < 1:
-                self.send_json({'results': []})
-                return
-            results = search_tickers(query)
-            self.send_json({'results': results})
-            return
-        
-        # Main data endpoint
         ticker = params.get('ticker', ['AAPL'])[0].upper()
         years = int(params.get('years', ['10'])[0])
         
@@ -173,7 +170,6 @@ class handler(BaseHTTPRequestHandler):
             stock_hist = stock.history(start=start_date, end=end_date)
             
             if stock_hist.empty:
-                # Try to find similar tickers
                 suggestions = search_tickers(ticker.replace('.', ' '))
                 self.send_error_response(404, f'No data found for {ticker}', suggestions)
                 return
@@ -187,13 +183,22 @@ class handler(BaseHTTPRequestHandler):
             
             current_gold_price = gold_hist['Close'].iloc[-1]
             
-            stock_df = stock_hist[['Close']].rename(columns={'Close': 'stock_price'})
+            # Merge stock and gold data
+            stock_df = stock_hist[['Open', 'High', 'Low', 'Close', 'Volume']].copy()
             gold_df = gold_hist[['Close']].rename(columns={'Close': 'gold_price'})
             merged = stock_df.join(gold_df, how='inner')
-            merged['stock_in_gold'] = merged['stock_price'] / merged['gold_price']
             
-            gold_prices = merged['stock_in_gold'].tolist()
-            usd_prices = merged['stock_price'].tolist()
+            # Calculate gold-denominated OHLC
+            merged['open_gold'] = merged['Open'] / merged['gold_price']
+            merged['high_gold'] = merged['High'] / merged['gold_price']
+            merged['low_gold'] = merged['Low'] / merged['gold_price']
+            merged['close_gold'] = merged['Close'] / merged['gold_price']
+            
+            gold_prices = merged['close_gold'].tolist()
+            usd_prices = merged['Close'].tolist()
+            high_gold = merged['high_gold'].tolist()
+            low_gold = merged['low_gold'].tolist()
+            volume = merged['Volume'].tolist()
             
             # Technical Indicators
             sma_20 = calculate_sma(gold_prices, 20)
@@ -204,6 +209,10 @@ class handler(BaseHTTPRequestHandler):
             rsi = calculate_rsi(gold_prices, 14)
             macd_line, signal_line, macd_histogram = calculate_macd(gold_prices)
             bb_middle, bb_upper, bb_lower = calculate_bollinger(gold_prices, 20, 2)
+            stoch_k, stoch_d = calculate_stochastic(high_gold, low_gold, gold_prices)
+            
+            # Volume SMA
+            volume_sma = calculate_sma(volume, 20)
             
             info = {}
             try:
@@ -233,18 +242,34 @@ class handler(BaseHTTPRequestHandler):
                 'ticker': ticker,
                 'company_name': info.get('shortName') or info.get('longName') or ticker,
                 'dates': [d.strftime('%Y-%m-%d') for d in merged.index],
+                # OHLCV data
+                'ohlc': {
+                    'open': [round(x, 6) for x in merged['open_gold'].tolist()],
+                    'high': [round(x, 6) for x in high_gold],
+                    'low': [round(x, 6) for x in low_gold],
+                    'close': [round(x, 6) for x in gold_prices],
+                    'open_usd': [round(x, 2) for x in merged['Open'].tolist()],
+                    'high_usd': [round(x, 2) for x in merged['High'].tolist()],
+                    'low_usd': [round(x, 2) for x in merged['Low'].tolist()],
+                    'close_usd': [round(x, 2) for x in usd_prices],
+                },
+                'volume': [int(v) for v in volume],
+                'volume_sma': volume_sma,
                 'stock_usd': [round(x, 2) for x in usd_prices],
                 'gold_usd': [round(x, 2) for x in merged['gold_price'].tolist()],
                 'stock_in_gold': [round(x, 6) for x in gold_prices],
                 'stats': {
-                    'start_price_usd': round(merged['stock_price'].iloc[0], 2),
-                    'end_price_usd': round(merged['stock_price'].iloc[-1], 2),
-                    'change_usd_pct': round((merged['stock_price'].iloc[-1] / merged['stock_price'].iloc[0] - 1) * 100, 2),
-                    'start_price_gold': round(merged['stock_in_gold'].iloc[0], 6),
-                    'end_price_gold': round(merged['stock_in_gold'].iloc[-1], 6),
-                    'change_gold_pct': round((merged['stock_in_gold'].iloc[-1] / merged['stock_in_gold'].iloc[0] - 1) * 100, 2),
+                    'start_price_usd': round(merged['Close'].iloc[0], 2),
+                    'end_price_usd': round(merged['Close'].iloc[-1], 2),
+                    'change_usd_pct': round((merged['Close'].iloc[-1] / merged['Close'].iloc[0] - 1) * 100, 2),
+                    'start_price_gold': round(merged['close_gold'].iloc[0], 6),
+                    'end_price_gold': round(merged['close_gold'].iloc[-1], 6),
+                    'change_gold_pct': round((merged['close_gold'].iloc[-1] / merged['close_gold'].iloc[0] - 1) * 100, 2),
                     'start_gold_price': round(merged['gold_price'].iloc[0], 2),
                     'end_gold_price': round(merged['gold_price'].iloc[-1], 2),
+                    'high_gold': round(max(high_gold), 6),
+                    'low_gold': round(min(low_gold), 6),
+                    'avg_volume': int(sum(volume) / len(volume)) if volume else 0,
                 },
                 'technical': {
                     'sma_20': sma_20,
@@ -259,7 +284,11 @@ class handler(BaseHTTPRequestHandler):
                     'bb_upper': bb_upper,
                     'bb_middle': bb_middle,
                     'bb_lower': bb_lower,
+                    'stoch_k': stoch_k,
+                    'stoch_d': stoch_d,
                     'current_rsi': rsi[-1] if rsi and rsi[-1] else None,
+                    'current_macd': macd_line[-1] if macd_line and macd_line[-1] else None,
+                    'current_macd_signal': signal_line[-1] if signal_line and len(signal_line) > 0 and signal_line[-1] else None,
                 },
                 'metrics': {
                     'market_cap_usd': market_cap,
